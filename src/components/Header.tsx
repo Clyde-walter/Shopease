@@ -45,6 +45,14 @@ export function Header() {
                 Products
               </Link>
               <Link
+                to="/collections"
+                className={`font-medium transition-colors hover:text-ecommerce-600 ${
+                  isActive('/collections') ? 'text-ecommerce-600' : 'text-gray-700'
+                }`}
+              >
+                Collections
+              </Link>
+              <Link
                 to="/orders"
                 className={`font-medium transition-colors hover:text-ecommerce-600 ${
                   isActive('/orders') ? 'text-ecommerce-600' : 'text-gray-700'

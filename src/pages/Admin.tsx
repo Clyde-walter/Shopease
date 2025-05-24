@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Package, DollarSign, ShoppingCart, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { useStore } from '@/contexts/StoreContext';
 import { toast } from '@/hooks/use-toast';
+import { AuthGuard } from '@/components/AuthGuard';
 
-export function Admin() {
+function AdminContent() {
   const { products, orders, addProduct, updateProduct, deleteProduct, updateOrderStatus } = useStore();
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -337,5 +337,13 @@ export function Admin() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export function Admin() {
+  return (
+    <AuthGuard>
+      <AdminContent />
+    </AuthGuard>
   );
 }

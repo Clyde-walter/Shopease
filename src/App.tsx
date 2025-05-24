@@ -8,6 +8,7 @@ import { StoreProvider } from "@/contexts/StoreContext";
 import { Header } from "@/components/Header";
 import { Home } from "@/pages/Home";
 import { Products } from "@/pages/Products";
+import { Collections } from "@/pages/Collections";
 import { Checkout } from "@/pages/Checkout";
 import { Orders } from "@/pages/Orders";
 import { Admin } from "@/pages/Admin";
@@ -28,6 +29,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/collections" element={<Collections />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/orders/:orderId" element={<Orders />} />
