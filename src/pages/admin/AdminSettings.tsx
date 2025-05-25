@@ -10,9 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import { toast } from '@/hooks/use-toast';
 
 export function AdminSettings() {
   const [showApiKey, setShowApiKey] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState('blue');
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  
   const [notifications, setNotifications] = useState({
     newOrders: true,
     lowStock: true,
@@ -29,6 +34,98 @@ export function AdminSettings() {
     timezone: 'America/New_York',
     taxRate: 8.5
   });
+
+  const [paymentSettings, setPaymentSettings] = useState({
+    stripeEnabled: true,
+    paypalEnabled: false,
+    stripeApiKey: ''
+  });
+
+  const [securitySettings, setSecuritySettings] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+    twoFactorEnabled: false
+  });
+
+  const handleSaveStoreSettings = () => {
+    // Save store settings to localStorage or context
+    localStorage.setItem('storeSettings', JSON.stringify(storeSettings));
+    toast({
+      title: "Settings saved!",
+      description: "Store information has been updated successfully.",
+    });
+  };
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveAppearance = () => {
+    // Apply theme changes
+    document.documentElement.className = `theme-${selectedTheme}`;
+    localStorage.setItem('siteTheme', selectedTheme);
+    
+    if (logoFile) {
+      localStorage.setItem('siteLogo', logoPreview || '');
+    }
+    
+    toast({
+      title: "Appearance saved!",
+      description: "Theme and logo changes have been applied.",
+    });
+  };
+
+  const handleSavePayments = () => {
+    localStorage.setItem('paymentSettings', JSON.stringify(paymentSettings));
+    toast({
+      title: "Payment settings saved!",
+      description: "Payment configuration has been updated.",
+    });
+  };
+
+  const handleSaveNotifications = () => {
+    localStorage.setItem('notificationSettings', JSON.stringify(notifications));
+    toast({
+      title: "Notification settings saved!",
+      description: "Your notification preferences have been updated.",
+    });
+  };
+
+  const handleSaveSecurity = () => {
+    if (securitySettings.newPassword !== securitySettings.confirmPassword) {
+      toast({
+        title: "Password mismatch",
+        description: "New password and confirmation do not match.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    localStorage.setItem('securitySettings', JSON.stringify({
+      twoFactorEnabled: securitySettings.twoFactorEnabled
+    }));
+    
+    toast({
+      title: "Security settings updated!",
+      description: "Your security preferences have been saved.",
+    });
+  };
+
+  const themes = [
+    { id: 'blue', name: 'Blue Theme', color: 'bg-blue-500' },
+    { id: 'green', name: 'Green Theme', color: 'bg-green-500' },
+    { id: 'purple', name: 'Purple Theme', color: 'bg-purple-500' },
+    { id: 'dark', name: 'Dark Theme', color: 'bg-gray-500' }
+  ];
 
   return (
     <div className="p-8">
@@ -130,7 +227,7 @@ export function AdminSettings() {
                   rows={3}
                 />
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSaveStoreSettings} className="bg-blue-600 hover:bg-blue-700">
                 <Save className="w-4 h-4 mr-2" />
                 Save Changes
               </Button>
@@ -150,38 +247,47 @@ export function AdminSettings() {
               <div>
                 <Label>Store Logo</Label>
                 <div className="flex items-center gap-4 mt-2">
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-gray-400" />
+                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                    {logoPreview ? (
+                      <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <Upload className="w-8 h-8 text-gray-400" />
+                    )}
                   </div>
-                  <Button variant="outline">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Logo
-                  </Button>
+                  <div>
+                    <input
+                      type="file"
+                      id="logo-upload"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                    <Button variant="outline" onClick={() => document.getElementById('logo-upload')?.click()}>
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Logo
+                    </Button>
+                  </div>
                 </div>
               </div>
               <Separator />
               <div>
                 <Label>Theme Settings</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                  <div className="p-4 border rounded-lg cursor-pointer hover:border-blue-500">
-                    <div className="w-full h-16 bg-blue-500 rounded mb-2"></div>
-                    <p className="text-sm font-medium">Blue Theme</p>
-                  </div>
-                  <div className="p-4 border rounded-lg cursor-pointer hover:border-green-500">
-                    <div className="w-full h-16 bg-green-500 rounded mb-2"></div>
-                    <p className="text-sm font-medium">Green Theme</p>
-                  </div>
-                  <div className="p-4 border rounded-lg cursor-pointer hover:border-purple-500">
-                    <div className="w-full h-16 bg-purple-500 rounded mb-2"></div>
-                    <p className="text-sm font-medium">Purple Theme</p>
-                  </div>
-                  <div className="p-4 border rounded-lg cursor-pointer hover:border-gray-500">
-                    <div className="w-full h-16 bg-gray-500 rounded mb-2"></div>
-                    <p className="text-sm font-medium">Dark Theme</p>
-                  </div>
+                  {themes.map((theme) => (
+                    <div
+                      key={theme.id}
+                      className={`p-4 border rounded-lg cursor-pointer hover:border-blue-500 ${
+                        selectedTheme === theme.id ? 'border-blue-500 bg-blue-50' : ''
+                      }`}
+                      onClick={() => setSelectedTheme(theme.id)}
+                    >
+                      <div className={`w-full h-16 ${theme.color} rounded mb-2`}></div>
+                      <p className="text-sm font-medium">{theme.name}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSaveAppearance} className="bg-blue-600 hover:bg-blue-700">
                 <Save className="w-4 h-4 mr-2" />
                 Save Appearance
               </Button>
@@ -206,7 +312,10 @@ export function AdminSettings() {
                       <p className="text-sm text-gray-600">Credit cards, Apple Pay, Google Pay</p>
                     </div>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch 
+                    checked={paymentSettings.stripeEnabled}
+                    onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, stripeEnabled: checked})}
+                  />
                 </div>
                 <div className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex items-center gap-3">
@@ -218,7 +327,10 @@ export function AdminSettings() {
                       <p className="text-sm text-gray-600">PayPal payments</p>
                     </div>
                   </div>
-                  <Switch />
+                  <Switch 
+                    checked={paymentSettings.paypalEnabled}
+                    onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, paypalEnabled: checked})}
+                  />
                 </div>
               </div>
               <Separator />
@@ -230,6 +342,8 @@ export function AdminSettings() {
                     type={showApiKey ? "text" : "password"}
                     placeholder="sk_test_..."
                     className="flex-1"
+                    value={paymentSettings.stripeApiKey}
+                    onChange={(e) => setPaymentSettings({...paymentSettings, stripeApiKey: e.target.value})}
                   />
                   <Button
                     variant="outline"
@@ -239,7 +353,7 @@ export function AdminSettings() {
                   </Button>
                 </div>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSavePayments} className="bg-blue-600 hover:bg-blue-700">
                 <Save className="w-4 h-4 mr-2" />
                 Save Payment Settings
               </Button>
@@ -298,7 +412,7 @@ export function AdminSettings() {
                   />
                 </div>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSaveNotifications} className="bg-blue-600 hover:bg-blue-700">
                 <Save className="w-4 h-4 mr-2" />
                 Save Notifications
               </Button>
@@ -317,15 +431,30 @@ export function AdminSettings() {
             <CardContent className="space-y-6">
               <div>
                 <Label htmlFor="currentPassword">Current Password</Label>
-                <Input id="currentPassword" type="password" />
+                <Input 
+                  id="currentPassword" 
+                  type="password" 
+                  value={securitySettings.currentPassword}
+                  onChange={(e) => setSecuritySettings({...securitySettings, currentPassword: e.target.value})}
+                />
               </div>
               <div>
                 <Label htmlFor="newPassword">New Password</Label>
-                <Input id="newPassword" type="password" />
+                <Input 
+                  id="newPassword" 
+                  type="password" 
+                  value={securitySettings.newPassword}
+                  onChange={(e) => setSecuritySettings({...securitySettings, newPassword: e.target.value})}
+                />
               </div>
               <div>
                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input id="confirmPassword" type="password" />
+                <Input 
+                  id="confirmPassword" 
+                  type="password" 
+                  value={securitySettings.confirmPassword}
+                  onChange={(e) => setSecuritySettings({...securitySettings, confirmPassword: e.target.value})}
+                />
               </div>
               <Separator />
               <div className="flex items-center justify-between">
@@ -333,9 +462,12 @@ export function AdminSettings() {
                   <p className="font-medium">Two-Factor Authentication</p>
                   <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
                 </div>
-                <Button variant="outline">Enable 2FA</Button>
+                <Switch
+                  checked={securitySettings.twoFactorEnabled}
+                  onCheckedChange={(checked) => setSecuritySettings({...securitySettings, twoFactorEnabled: checked})}
+                />
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleSaveSecurity} className="bg-blue-600 hover:bg-blue-700">
                 <Save className="w-4 h-4 mr-2" />
                 Update Security
               </Button>
