@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStore } from '@/contexts/StoreContext';
 
 export function Cart() {
-  const { cart, updateCartQuantity, removeFromCart, getCartTotal } = useStore();
+  const { cart, updateQuantity, removeFromCart, getCartTotal } = useStore();
 
   const total = getCartTotal();
 
@@ -54,7 +54,7 @@ export function Cart() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                       >
                         <Minus className="w-4 h-4" />
                       </Button>
@@ -62,7 +62,7 @@ export function Cart() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => updateCartQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                       >
                         <Plus className="w-4 h-4" />
                       </Button>
