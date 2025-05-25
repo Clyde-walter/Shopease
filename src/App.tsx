@@ -10,6 +10,9 @@ import { Footer } from "@/components/Footer";
 import { Home } from "@/pages/Home";
 import { Products } from "@/pages/Products";
 import { Collections } from "@/pages/Collections";
+import { CollectionDetail } from "@/pages/CollectionDetail";
+import { ProductDetail } from "@/pages/ProductDetail";
+import { CustomDesign } from "@/pages/CustomDesign";
 import { Checkout } from "@/pages/Checkout";
 import { Orders } from "@/pages/Orders";
 import { Admin } from "@/pages/Admin";
@@ -39,6 +42,9 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/collections" element={<Collections />} />
+                <Route path="/collection/:id" element={<CollectionDetail />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/custom-design" element={<CustomDesign />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<Orders />} />

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Heart } from 'lucide-react';
@@ -56,6 +57,16 @@ const collections = [
 ];
 
 export function Collections() {
+  const navigate = useNavigate();
+
+  const handleExploreCollection = (collectionId: number) => {
+    navigate(`/collection/${collectionId}`);
+  };
+
+  const handleCustomDesign = () => {
+    navigate('/custom-design');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-12">
@@ -112,6 +123,7 @@ export function Collections() {
                   
                   <Button 
                     className="w-full bg-ecommerce-600 hover:bg-ecommerce-700 text-white font-semibold py-3 group-hover:shadow-lg transition-all duration-300"
+                    onClick={() => handleExploreCollection(collection.id)}
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Explore Collection
@@ -131,7 +143,10 @@ export function Collections() {
             Our expert jewelers can create custom pieces tailored to your unique style and preferences. 
             Contact us to discuss your vision.
           </p>
-          <Button className="bg-ecommerce-600 hover:bg-ecommerce-700 text-white px-8 py-3 text-lg">
+          <Button 
+            className="bg-ecommerce-600 hover:bg-ecommerce-700 text-white px-8 py-3 text-lg"
+            onClick={handleCustomDesign}
+          >
             Request Custom Design
           </Button>
         </div>
