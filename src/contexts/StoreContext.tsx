@@ -26,6 +26,7 @@ export interface WishlistItem {
 
 export interface Order {
   id: string;
+  orderNumber: string;
   items: CartItem[];
   total: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
@@ -34,6 +35,9 @@ export interface Order {
     name: string;
     email: string;
     address: string;
+    phone?: string;
+    city?: string;
+    zipCode?: string;
   };
 }
 
@@ -241,11 +245,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const createOrder = (customerInfo: any): Order => {
-    // Generate a proper order number with ORD prefix
     const orderNumber = `ORD-${String(Date.now()).slice(-6)}`;
     
     const newOrder: Order = {
-      id: orderNumber, // Use the formatted order number as ID
+      id: orderNumber,
+      orderNumber: orderNumber,
       items: [...cart],
       total: getCartTotal(),
       status: 'pending',
