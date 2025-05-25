@@ -6,22 +6,20 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useStore } from '@/contexts/StoreContext';
 
 export function LiveMap() {
+  const { orders } = useStore();
   const [selectedOrder, setSelectedOrder] = useState('');
   const [orderInput, setOrderInput] = useState('');
   const [orderFound, setOrderFound] = useState(false);
   const [searchAttempted, setSearchAttempted] = useState(false);
 
-  // Expanded mock order tracking data
-  const orderData: Record<string, any> = {
+  // Mock tracking data for demo orders - this would normally come from your tracking service
+  const mockTrackingData: Record<string, any> = {
     'ORD-001': {
-      status: 'In Transit',
-      estimatedDelivery: '2024-05-26 14:30',
       currentLocation: 'Distribution Center - New York',
       coordinates: { lat: 40.7128, lng: -74.0060 },
-      customerName: 'John Doe',
-      items: ['Premium Wireless Headphones', 'Bluetooth Speaker'],
       trackingNumber: 'TRK-001-2024',
       timeline: [
         { status: 'Order Placed', time: '2024-05-24 10:00', completed: true },
@@ -33,12 +31,8 @@ export function LiveMap() {
       ]
     },
     'ORD-002': {
-      status: 'Processing',
-      estimatedDelivery: '2024-05-28 16:00',
       currentLocation: 'Warehouse - California',
       coordinates: { lat: 34.0522, lng: -118.2437 },
-      customerName: 'Jane Smith',
-      items: ['Organic Cotton T-Shirt', 'Yoga Mat'],
       trackingNumber: 'TRK-002-2024',
       timeline: [
         { status: 'Order Placed', time: '2024-05-25 15:30', completed: true },
@@ -48,40 +42,6 @@ export function LiveMap() {
         { status: 'Out for Delivery', time: '2024-05-28 08:00', completed: false },
         { status: 'Delivered', time: '2024-05-28 16:00', completed: false }
       ]
-    },
-    'ORD-003': {
-      status: 'Delivered',
-      estimatedDelivery: '2024-05-24 12:00',
-      currentLocation: 'Delivered - Customer Address',
-      coordinates: { lat: 41.8781, lng: -87.6298 },
-      customerName: 'Mike Johnson',
-      items: ['Coffee Mug Set', 'Stainless Steel Water Bottle'],
-      trackingNumber: 'TRK-003-2024',
-      timeline: [
-        { status: 'Order Placed', time: '2024-05-22 09:15', completed: true },
-        { status: 'Processing', time: '2024-05-22 12:00', completed: true },
-        { status: 'Shipped', time: '2024-05-23 08:30', completed: true },
-        { status: 'In Transit', time: '2024-05-23 14:45', completed: true },
-        { status: 'Out for Delivery', time: '2024-05-24 09:00', completed: true },
-        { status: 'Delivered', time: '2024-05-24 12:00', completed: true }
-      ]
-    },
-    'ORD-004': {
-      status: 'Shipped',
-      estimatedDelivery: '2024-05-27 18:00',
-      currentLocation: 'Sorting Facility - Texas',
-      coordinates: { lat: 32.7767, lng: -96.7970 },
-      customerName: 'Sarah Wilson',
-      items: ['Premium Wireless Headphones'],
-      trackingNumber: 'TRK-004-2024',
-      timeline: [
-        { status: 'Order Placed', time: '2024-05-25 11:20', completed: true },
-        { status: 'Processing', time: '2024-05-25 16:30', completed: true },
-        { status: 'Shipped', time: '2024-05-26 07:15', completed: true },
-        { status: 'In Transit', time: '2024-05-26 20:00', completed: false },
-        { status: 'Out for Delivery', time: '2024-05-27 08:00', completed: false },
-        { status: 'Delivered', time: '2024-05-27 18:00', completed: false }
-      ]
     }
   };
 
@@ -89,10 +49,13 @@ export function LiveMap() {
     setSearchAttempted(true);
     const trimmedInput = orderInput.trim().toUpperCase();
     
-    if (orderData[trimmedInput]) {
+    // First check actual orders from the store
+    const actualOrder = orders.find(order => order.id.toUpperCase() === trimmedInput);
+    
+    if (actualOrder) {
       setSelectedOrder(trimmedInput);
       setOrderFound(true);
-      console.log(`Order found: ${trimmedInput}`, orderData[trimmedInput]);
+      console.log(`Order found: ${trimmedInput}`, actualOrder);
     } else {
       setOrderFound(false);
       setSelectedOrder('');
@@ -125,12 +88,15 @@ export function LiveMap() {
         return 'bg-blue-600';
       case 'processing':
         return 'bg-yellow-600';
+      case 'pending':
+        return 'bg-orange-600';
       default:
         return 'bg-ecommerce-600';
     }
   };
 
-  const currentOrder = selectedOrder ? orderData[selectedOrder] : null;
+  const currentOrder = selectedOrder ? orders.find(order => order.id === selectedOrder) : null;
+  const trackingInfo = mockTrackingData[selectedOrder] || {};
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -144,7 +110,7 @@ export function LiveMap() {
         <CardContent>
           <div className="flex space-x-4">
             <Input
-              placeholder="Enter your order number (e.g., ORD-001)"
+              placeholder="Enter your order number (e.g., ORD-123456)"
               value={orderInput}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
@@ -171,25 +137,27 @@ export function LiveMap() {
           )}
 
           {/* Available orders hint */}
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-700 font-medium mb-2">Available demo orders to track:</p>
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(orderData).map((orderId) => (
-                <button
-                  key={orderId}
-                  onClick={() => {
-                    setOrderInput(orderId);
-                    setSelectedOrder(orderId);
-                    setOrderFound(true);
-                    setSearchAttempted(true);
-                  }}
-                  className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs rounded transition-colors"
-                >
-                  {orderId}
-                </button>
-              ))}
+          {orders.length > 0 && (
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-700 font-medium mb-2">Your recent orders:</p>
+              <div className="flex flex-wrap gap-2">
+                {orders.slice(-5).map((order) => (
+                  <button
+                    key={order.id}
+                    onClick={() => {
+                      setOrderInput(order.id);
+                      setSelectedOrder(order.id);
+                      setOrderFound(true);
+                      setSearchAttempted(true);
+                    }}
+                    className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs rounded transition-colors"
+                  >
+                    {order.id}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -213,11 +181,13 @@ export function LiveMap() {
                       Real-time tracking map for order {selectedOrder}
                     </p>
                     <p className="text-sm text-gray-500 mt-2">
-                      Current Location: {currentOrder.currentLocation}
+                      Current Location: {trackingInfo.currentLocation || 'Processing Center'}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Coordinates: {currentOrder.coordinates.lat}, {currentOrder.coordinates.lng}
-                    </p>
+                    {trackingInfo.coordinates && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        Coordinates: {trackingInfo.coordinates.lat}, {trackingInfo.coordinates.lng}
+                      </p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -240,23 +210,23 @@ export function LiveMap() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Customer:</span>
-                  <span>{currentOrder.customerName}</span>
+                  <span>{currentOrder.customerInfo?.name || 'Customer'}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Status:</span>
                   <Badge className={getStatusColor(currentOrder.status)}>
-                    {currentOrder.status}
+                    {currentOrder.status.charAt(0).toUpperCase() + currentOrder.status.slice(1)}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Tracking #:</span>
-                  <span className="font-mono text-sm">{currentOrder.trackingNumber}</span>
+                  <span className="font-mono text-sm">{trackingInfo.trackingNumber || `TRK-${selectedOrder.slice(-6)}`}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Est. Delivery:</span>
+                  <span className="font-medium">Order Date:</span>
                   <span className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
-                    {currentOrder.estimatedDelivery}
+                    {new Date(currentOrder.createdAt).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -269,10 +239,14 @@ export function LiveMap() {
                 <div>
                   <span className="font-medium">Items:</span>
                   <ul className="text-sm text-gray-600 mt-1">
-                    {currentOrder.items.map((item: string, index: number) => (
-                      <li key={index} className="ml-2">• {item}</li>
+                    {currentOrder.items.map((item, index) => (
+                      <li key={index} className="ml-2">• {item.product.name} (x{item.quantity})</li>
                     ))}
                   </ul>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">Total:</span>
+                  <span className="font-semibold">${currentOrder.total.toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -284,7 +258,13 @@ export function LiveMap() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {currentOrder.timeline.map((item: any, index: number) => (
+                  {(trackingInfo.timeline || [
+                    { status: 'Order Placed', time: currentOrder.createdAt, completed: true },
+                    { status: 'Processing', time: '', completed: currentOrder.status !== 'pending' },
+                    { status: 'Shipped', time: '', completed: ['shipped', 'delivered'].includes(currentOrder.status) },
+                    { status: 'In Transit', time: '', completed: currentOrder.status === 'delivered' },
+                    { status: 'Delivered', time: '', completed: currentOrder.status === 'delivered' }
+                  ]).map((item: any, index: number) => (
                     <div key={index} className="flex items-start space-x-3">
                       <div className={`w-3 h-3 rounded-full mt-1 ${
                         item.completed ? 'bg-ecommerce-600' : 'bg-gray-300'
@@ -295,7 +275,11 @@ export function LiveMap() {
                         }`}>
                           {item.status}
                         </p>
-                        <p className="text-sm text-gray-500">{item.time}</p>
+                        {item.time && (
+                          <p className="text-sm text-gray-500">
+                            {new Date(item.time).toLocaleString()}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}

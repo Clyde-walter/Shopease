@@ -241,8 +241,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const createOrder = (customerInfo: any): Order => {
+    // Generate a proper order number with ORD prefix
+    const orderNumber = `ORD-${String(Date.now()).slice(-6)}`;
+    
     const newOrder: Order = {
-      id: Date.now().toString(),
+      id: orderNumber, // Use the formatted order number as ID
       items: [...cart],
       total: getCartTotal(),
       status: 'pending',

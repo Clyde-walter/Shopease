@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, MapPin, User, Lock } from 'lucide-react';
+import { CreditCard, MapPin, User, Lock, Copy, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,7 @@ export function Checkout() {
   const navigate = useNavigate();
   const { cart, getCartTotal, createOrder, clearCart } = useStore();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [orderCreated, setOrderCreated] = useState<any>(null);
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
     email: '',
@@ -28,6 +29,16 @@ export function Checkout() {
 
   const handleInputChange = (field: string, value: string) => {
     setCustomerInfo(prev => ({ ...prev, [field]: value }));
+  };
+
+  const copyOrderNumber = () => {
+    if (orderCreated) {
+      navigator.clipboard.writeText(orderCreated.id);
+      toast({
+        title: "Order number copied!",
+        description: "You can now use this number to track your order."
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,13 +59,12 @@ export function Checkout() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       const order = createOrder(customerInfo);
+      setOrderCreated(order);
       
       toast({
         title: "Order placed successfully!",
         description: `Order #${order.id} has been created.`
       });
-      
-      navigate(`/orders/${order.id}`);
     } catch (error) {
       toast({
         title: "Payment failed",
@@ -66,7 +76,7 @@ export function Checkout() {
     }
   };
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && !orderCreated) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
@@ -75,6 +85,86 @@ export function Checkout() {
           <Button onClick={() => navigate('/products')}>
             Continue Shopping
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show order confirmation if order was created
+  if (orderCreated) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="mb-8">
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-green-600 mb-4">Order Confirmed!</h1>
+            <p className="text-gray-600 mb-6">
+              Thank you for your purchase. Your order has been successfully placed.
+            </p>
+          </div>
+
+          <Card className="mb-6">
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Your Order Number</h3>
+                  <div className="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                    <span className="text-2xl font-mono font-bold text-ecommerce-600">
+                      {orderCreated.id}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={copyOrderNumber}
+                      className="ml-2"
+                    >
+                      <Copy className="w-4 h-4 mr-1" />
+                      Copy
+                    </Button>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Save this number to track your order status
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-500">Total Amount:</span>
+                      <p className="font-semibold">${finalTotal.toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Status:</span>
+                      <p className="font-semibold text-blue-600">Processing</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-4">
+            <Button 
+              onClick={() => navigate('/live-map')}
+              className="w-full bg-ecommerce-600 hover:bg-ecommerce-700"
+            >
+              Track Your Order
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/orders')}
+              className="w-full"
+            >
+              View All Orders
+            </Button>
+            <Button 
+              variant="ghost"
+              onClick={() => navigate('/products')}
+              className="w-full"
+            >
+              Continue Shopping
+            </Button>
+          </div>
         </div>
       </div>
     );
