@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +13,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const navigate = useNavigate();
   const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
 
   const handleAddToCart = () => {
@@ -46,13 +48,18 @@ export function ProductCard({ product }: ProductCardProps) {
     }
   };
 
+  const handleProductClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
       <div className="relative overflow-hidden">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+          onClick={handleProductClick}
         />
         <Button
           variant="ghost"
@@ -75,7 +82,12 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardContent className="p-4">
         <div className="space-y-2">
           <div className="flex justify-between items-start">
-            <h3 className="font-semibold text-lg line-clamp-1">{product.name}</h3>
+            <h3 
+              className="font-semibold text-lg line-clamp-1 cursor-pointer hover:text-ecommerce-600 transition-colors"
+              onClick={handleProductClick}
+            >
+              {product.name}
+            </h3>
             <span className="text-ecommerce-600 font-bold text-lg">${product.price}</span>
           </div>
           <p className="text-gray-600 text-sm line-clamp-2">{product.description}</p>
