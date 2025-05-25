@@ -8,13 +8,52 @@ import { Badge } from '@/components/ui/badge';
 
 const collectionProducts = {
   '1': [
-    { id: 1, name: 'Diamond Solitaire Ring', price: 3500, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
-    { id: 2, name: 'Diamond Tennis Bracelet', price: 8500, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
-    { id: 3, name: 'Diamond Stud Earrings', price: 2800, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: false },
+    { id: 101, name: 'Diamond Solitaire Ring', price: 3500, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
+    { id: 102, name: 'Diamond Tennis Bracelet', price: 8500, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
+    { id: 103, name: 'Diamond Stud Earrings', price: 2800, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: false },
+    { id: 104, name: 'Diamond Pendant Necklace', price: 4200, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
+    { id: 105, name: 'Diamond Eternity Band', price: 5500, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
+    { id: 106, name: 'Diamond Halo Ring', price: 6200, image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop', inStock: true },
   ],
   '2': [
-    { id: 4, name: 'Gold Chain Necklace', price: 1200, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
-    { id: 5, name: 'Gold Vintage Ring', price: 2500, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
+    { id: 201, name: 'Gold Chain Necklace', price: 1200, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
+    { id: 202, name: 'Gold Vintage Ring', price: 2500, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
+    { id: 203, name: 'Gold Hoop Earrings', price: 850, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
+    { id: 204, name: 'Gold Signet Ring', price: 1800, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: false },
+    { id: 205, name: 'Gold Byzantine Bracelet', price: 3200, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
+    { id: 206, name: 'Gold Locket Pendant', price: 1450, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop', inStock: true },
+  ],
+  '3': [
+    { id: 301, name: 'Freshwater Pearl Necklace', price: 450, image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop', inStock: true },
+    { id: 302, name: 'Tahitian Pearl Earrings', price: 1200, image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop', inStock: true },
+    { id: 303, name: 'South Sea Pearl Ring', price: 2800, image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop', inStock: true },
+    { id: 304, name: 'Akoya Pearl Strand', price: 850, image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop', inStock: false },
+    { id: 305, name: 'Pearl Drop Earrings', price: 650, image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop', inStock: true },
+    { id: 306, name: 'Baroque Pearl Bracelet', price: 380, image: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop', inStock: true },
+  ],
+  '4': [
+    { id: 401, name: 'Ruby Solitaire Ring', price: 3800, image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=400&h=400&fit=crop', inStock: true },
+    { id: 402, name: 'Emerald Tennis Bracelet', price: 6500, image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=400&h=400&fit=crop', inStock: true },
+    { id: 403, name: 'Sapphire Halo Earrings', price: 2200, image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=400&h=400&fit=crop', inStock: true },
+    { id: 404, name: 'Amethyst Statement Necklace', price: 1650, image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=400&h=400&fit=crop', inStock: false },
+    { id: 405, name: 'Topaz Cocktail Ring', price: 1200, image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=400&h=400&fit=crop', inStock: true },
+    { id: 406, name: 'Garnet Drop Earrings', price: 850, image: 'https://images.unsplash.com/photo-1583292650898-7d22cd27ca6f?w=400&h=400&fit=crop', inStock: true },
+  ],
+  '5': [
+    { id: 501, name: 'Art Deco Diamond Ring', price: 2800, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop', inStock: true },
+    { id: 502, name: 'Victorian Cameo Brooch', price: 650, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop', inStock: true },
+    { id: 503, name: 'Edwardian Pearl Necklace', price: 1200, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop', inStock: false },
+    { id: 504, name: 'Retro Gold Bracelet', price: 1800, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop', inStock: true },
+    { id: 505, name: 'Vintage Emerald Earrings', price: 2200, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop', inStock: true },
+    { id: 506, name: 'Antique Signet Ring', price: 950, image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop', inStock: true },
+  ],
+  '6': [
+    { id: 601, name: 'Minimalist Gold Ring', price: 320, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop', inStock: true },
+    { id: 602, name: 'Geometric Silver Earrings', price: 180, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop', inStock: true },
+    { id: 603, name: 'Contemporary Diamond Pendant', price: 850, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop', inStock: true },
+    { id: 604, name: 'Modern Link Bracelet', price: 450, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop', inStock: false },
+    { id: 605, name: 'Sleek Band Ring', price: 280, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop', inStock: true },
+    { id: 606, name: 'Linear Drop Earrings', price: 320, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&h=400&fit=crop', inStock: true },
   ]
 };
 
