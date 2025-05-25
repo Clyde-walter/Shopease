@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShoppingBag, Truck, Shield, HeartHandshake } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Truck, Shield, HeartHandshake, Star, TrendingUp, Sparkles, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/ProductCard';
 import { useStore } from '@/contexts/StoreContext';
 import {
@@ -16,6 +18,9 @@ import {
 export function Home() {
   const { products } = useStore();
   const featuredProducts = products.slice(0, 3);
+  const topRatedProducts = products.filter(product => product.price > 1000).slice(0, 4);
+  const mostPurchasedProducts = products.slice(2, 6);
+  const newArrivals = products.slice(0, 4);
 
   const heroImages = [
     {
@@ -38,6 +43,29 @@ export function Home() {
       subtitle: "Modern elegance meets classic style",
       image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
       cta: "Shop Silver"
+    }
+  ];
+
+  const categories = [
+    {
+      name: "Rings",
+      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop",
+      count: "120+ Items"
+    },
+    {
+      name: "Necklaces",
+      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&h=300&fit=crop",
+      count: "85+ Items"
+    },
+    {
+      name: "Bracelets",
+      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300&h=300&fit=crop",
+      count: "95+ Items"
+    },
+    {
+      name: "Earrings",
+      image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=300&h=300&fit=crop",
+      count: "110+ Items"
     }
   ];
 
@@ -87,6 +115,39 @@ export function Home() {
         </Carousel>
       </section>
 
+      {/* Categories Section */}
+      <section className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Grid3X3 className="w-6 h-6 text-ecommerce-600" />
+            <h2 className="text-3xl font-bold">Shop by Category</h2>
+          </div>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Explore our wide range of jewelry categories, each crafted with precision and care.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {categories.map((category) => (
+            <Link key={category.name} to="/products" className="group">
+              <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="relative">
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                    <h3 className="text-lg font-semibold mb-1">{category.name}</h3>
+                    <p className="text-sm opacity-90">{category.count}</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -111,6 +172,77 @@ export function Home() {
             <h3 className="text-xl font-semibold mb-2">30-Day Returns</h3>
             <p className="text-gray-600">Not satisfied? Return any item within 30 days for a full refund.</p>
           </div>
+        </div>
+      </section>
+
+      {/* Top Rated Products */}
+      <section className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Star className="w-6 h-6 text-yellow-500 fill-current" />
+            <h2 className="text-3xl font-bold">Top Rated Products</h2>
+          </div>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Our customers' favorites - these products have earned the highest ratings for quality and satisfaction.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {topRatedProducts.map((product) => (
+            <div key={product.id} className="relative">
+              <Badge className="absolute top-2 left-2 z-10 bg-yellow-500 text-white">
+                ⭐ Top Rated
+              </Badge>
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Most Purchased */}
+      <section className="bg-gray-50">
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <TrendingUp className="w-6 h-6 text-green-600" />
+              <h2 className="text-3xl font-bold">Most Purchased</h2>
+            </div>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Join thousands of satisfied customers who chose these bestselling items.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {mostPurchasedProducts.map((product) => (
+              <div key={product.id} className="relative">
+                <Badge className="absolute top-2 left-2 z-10 bg-green-600 text-white">
+                  🔥 Bestseller
+                </Badge>
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="w-6 h-6 text-purple-600" />
+            <h2 className="text-3xl font-bold">New Arrivals</h2>
+          </div>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Discover our latest collection featuring the newest trends in jewelry design.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {newArrivals.map((product) => (
+            <div key={product.id} className="relative">
+              <Badge className="absolute top-2 left-2 z-10 bg-purple-600 text-white">
+                ✨ New
+              </Badge>
+              <ProductCard product={product} />
+            </div>
+          ))}
         </div>
       </section>
 
