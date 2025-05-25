@@ -15,8 +15,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { AuthGuard } from '@/components/AuthGuard';
 
-export function AdminLayout() {
+function AdminLayoutContent() {
   const location = useLocation();
 
   const sidebarItems = [
@@ -77,5 +78,13 @@ export function AdminLayout() {
         <Outlet />
       </div>
     </div>
+  );
+}
+
+export function AdminLayout() {
+  return (
+    <AuthGuard>
+      <AdminLayoutContent />
+    </AuthGuard>
   );
 }

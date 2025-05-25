@@ -20,6 +20,10 @@ import { Admin } from "@/pages/Admin";
 import { AdminProducts } from "@/pages/admin/AdminProducts";
 import { AdminOrders } from "@/pages/admin/AdminOrders";
 import { AdminCollections } from "@/pages/admin/AdminCollections";
+import { AdminCustomers } from "@/pages/admin/AdminCustomers";
+import { AdminShipping } from "@/pages/admin/AdminShipping";
+import { AdminAnalytics } from "@/pages/admin/AdminAnalytics";
+import { AdminSettings } from "@/pages/admin/AdminSettings";
 import { Cart } from "@/pages/Cart";
 import { Profile } from "@/pages/Profile";
 import { Wishlist } from "@/pages/Wishlist";
@@ -53,6 +57,10 @@ const App = () => (
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="collections" element={<AdminCollections />} />
+              <Route path="customers" element={<AdminCustomers />} />
+              <Route path="shipping" element={<AdminShipping />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="settings" element={<AdminSettings />} />
             </Route>
 
             {/* Public Routes with Header/Footer */}
