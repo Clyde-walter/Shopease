@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface Product {
@@ -14,6 +13,15 @@ export interface Product {
 export interface CartItem {
   product: Product;
   quantity: number;
+}
+
+export interface WishlistItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  description?: string;
+  originalPrice?: number;
 }
 
 export interface Order {
@@ -32,12 +40,16 @@ export interface Order {
 interface StoreContextType {
   products: Product[];
   cart: CartItem[];
+  wishlist: WishlistItem[];
   orders: Order[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product | WishlistItem) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getCartTotal: () => number;
+  addToWishlist: (item: WishlistItem) => void;
+  removeFromWishlist: (itemId: string) => void;
+  isInWishlist: (itemId: string) => boolean;
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
@@ -108,13 +120,18 @@ const initialProducts: Product[] = [
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
 
-  // Load cart from localStorage on mount
+  // Load data from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('ecommerce-cart');
     if (savedCart) {
       setCart(JSON.parse(savedCart));
+    }
+    const savedWishlist = localStorage.getItem('ecommerce-wishlist');
+    if (savedWishlist) {
+      setWishlist(JSON.parse(savedWishlist));
     }
     const savedOrders = localStorage.getItem('ecommerce-orders');
     if (savedOrders) {
@@ -122,27 +139,40 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save data to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('ecommerce-cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Save orders to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('ecommerce-wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+
   useEffect(() => {
     localStorage.setItem('ecommerce-orders', JSON.stringify(orders));
   }, [orders]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product | WishlistItem) => {
+    const cartProduct: Product = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      description: product.description || '',
+      category: 'category' in product ? product.category : 'General',
+      stock: 'stock' in product ? product.stock : 999
+    };
+
     setCart(currentCart => {
-      const existingItem = currentCart.find(item => item.product.id === product.id);
+      const existingItem = currentCart.find(item => item.product.id === cartProduct.id);
       if (existingItem) {
         return currentCart.map(item =>
-          item.product.id === product.id
+          item.product.id === cartProduct.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...currentCart, { product, quantity: 1 }];
+      return [...currentCart, { product: cartProduct, quantity: 1 }];
     });
   };
 
@@ -170,6 +200,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const getCartTotal = () => {
     return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  };
+
+  const addToWishlist = (item: WishlistItem) => {
+    setWishlist(currentWishlist => {
+      const exists = currentWishlist.find(wishItem => wishItem.id === item.id);
+      if (!exists) {
+        return [...currentWishlist, item];
+      }
+      return currentWishlist;
+    });
+  };
+
+  const removeFromWishlist = (itemId: string) => {
+    setWishlist(currentWishlist => currentWishlist.filter(item => item.id !== itemId));
+  };
+
+  const isInWishlist = (itemId: string) => {
+    return wishlist.some(item => item.id === itemId);
   };
 
   const addProduct = (productData: Omit<Product, 'id'>) => {
@@ -219,12 +267,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       value={{
         products,
         cart,
+        wishlist,
         orders,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
         getCartTotal,
+        addToWishlist,
+        removeFromWishlist,
+        isInWishlist,
         addProduct,
         updateProduct,
         deleteProduct,

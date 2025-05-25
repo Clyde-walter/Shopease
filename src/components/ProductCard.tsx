@@ -12,8 +12,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addToCart } = useStore();
-  const [isLiked, setIsLiked] = React.useState(false);
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -21,6 +20,30 @@ export function ProductCard({ product }: ProductCardProps) {
       title: "Added to cart!",
       description: `${product.name} has been added to your cart.`,
     });
+  };
+
+  const handleWishlistToggle = () => {
+    const wishlistItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      description: product.description
+    };
+
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+      toast({
+        title: "Removed from wishlist",
+        description: `${product.name} has been removed from your wishlist.`,
+      });
+    } else {
+      addToWishlist(wishlistItem);
+      toast({
+        title: "Added to wishlist!",
+        description: `${product.name} has been added to your wishlist.`,
+      });
+    }
   };
 
   return (
@@ -35,11 +58,13 @@ export function ProductCard({ product }: ProductCardProps) {
           variant="ghost"
           size="icon"
           className={`absolute top-2 right-2 ${
-            isLiked ? 'text-red-500' : 'text-gray-500'
-          } hover:text-red-500 bg-white/80 backdrop-blur-sm`}
-          onClick={() => setIsLiked(!isLiked)}
+            isInWishlist(product.id) 
+              ? 'text-red-500 bg-white' 
+              : 'text-gray-500 hover:text-red-500 bg-white/80 backdrop-blur-sm'
+          }`}
+          onClick={handleWishlistToggle}
         >
-          <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+          <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
         </Button>
         {product.stock <= 5 && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">

@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Heart, ArrowLeft, Filter, SortAsc } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useStore } from '@/contexts/StoreContext';
+import { toast } from '@/hooks/use-toast';
 
 const collectionProducts = {
   '1': [
@@ -71,6 +72,7 @@ export function CollectionDetail() {
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState('featured');
   const [filterBy, setFilterBy] = useState('all');
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
 
   const collection = collectionInfo[id as keyof typeof collectionInfo];
   const products = collectionProducts[id as keyof typeof collectionProducts] || [];
@@ -85,8 +87,43 @@ export function CollectionDetail() {
   }
 
   const handleAddToCart = (product: any) => {
-    console.log('Adding to cart:', product);
-    // Add to cart logic would go here
+    addToCart({
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      description: `${collection.title} - ${product.name}`,
+      category: collection.title,
+      stock: product.inStock ? 10 : 0
+    });
+    toast({
+      title: "Added to cart!",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
+  const handleWishlistToggle = (product: any) => {
+    const wishlistItem = {
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      description: `${collection.title} - ${product.name}`
+    };
+
+    if (isInWishlist(product.id.toString())) {
+      removeFromWishlist(product.id.toString());
+      toast({
+        title: "Removed from wishlist",
+        description: `${product.name} has been removed from your wishlist.`,
+      });
+    } else {
+      addToWishlist(wishlistItem);
+      toast({
+        title: "Added to wishlist!",
+        description: `${product.name} has been added to your wishlist.`,
+      });
+    }
   };
 
   const handleProductClick = (productId: number) => {
@@ -167,9 +204,14 @@ export function CollectionDetail() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                  className={`absolute top-2 right-2 ${
+                    isInWishlist(product.id.toString()) 
+                      ? 'text-red-500 bg-white' 
+                      : 'bg-white/80 hover:bg-white'
+                  }`}
+                  onClick={() => handleWishlistToggle(product)}
                 >
-                  <Heart className="w-4 h-4" />
+                  <Heart className={`w-4 h-4 ${isInWishlist(product.id.toString()) ? 'fill-current' : ''}`} />
                 </Button>
                 {!product.inStock && (
                   <Badge className="absolute top-2 left-2 bg-red-500">

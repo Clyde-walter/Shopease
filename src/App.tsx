@@ -24,6 +24,13 @@ import { LiveMap } from "@/pages/LiveMap";
 import { ManageAddresses } from "@/pages/ManageAddresses";
 import { PaymentMethods } from "@/pages/PaymentMethods";
 import { EditInformation } from "@/pages/EditInformation";
+import { Contact } from "@/pages/Contact";
+import { Support } from "@/pages/Support";
+import { Returns } from "@/pages/Returns";
+import { Warranty } from "@/pages/Warranty";
+import { Privacy } from "@/pages/Privacy";
+import { Terms } from "@/pages/Terms";
+import { Cookies } from "@/pages/Cookies";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +63,13 @@ const App = () => (
                 <Route path="/manage-addresses" element={<ManageAddresses />} />
                 <Route path="/payment-methods" element={<PaymentMethods />} />
                 <Route path="/edit-information" element={<EditInformation />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/returns" element={<Returns />} />
+                <Route path="/warranty" element={<Warranty />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/cookies" element={<Cookies />} />
                 <Route path="/admin" element={<Admin />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
