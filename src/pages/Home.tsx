@@ -5,39 +5,86 @@ import { ArrowRight, ShoppingBag, Truck, Shield, HeartHandshake } from 'lucide-r
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
 import { useStore } from '@/contexts/StoreContext';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export function Home() {
   const { products } = useStore();
   const featuredProducts = products.slice(0, 3);
 
+  const heroImages = [
+    {
+      id: 1,
+      title: "Elegant Diamond Collection",
+      subtitle: "Timeless beauty crafted to perfection",
+      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+      cta: "Shop Diamonds"
+    },
+    {
+      id: 2,
+      title: "Luxury Gold Jewelry",
+      subtitle: "Exquisite craftsmanship in every piece",
+      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+      cta: "Explore Gold"
+    },
+    {
+      id: 3,
+      title: "Sterling Silver Designs",
+      subtitle: "Modern elegance meets classic style",
+      image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+      cta: "Shop Silver"
+    }
+  ];
+
   return (
     <div className="space-y-16">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-ecommerce-600 to-ecommerce-800 text-white">
-        <div className="container mx-auto px-4 py-20">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl font-bold mb-6 animate-fade-in">
-              Discover Amazing Products
-            </h1>
-            <p className="text-xl mb-8 text-ecommerce-100 animate-fade-in">
-              Shop the latest trends and find exactly what you're looking for with our curated collection of premium products.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
-              <Link to="/products">
-                <Button size="lg" className="bg-white text-ecommerce-600 hover:bg-gray-100">
-                  Shop Now
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link to="/products">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-ecommerce-600">
-                  Browse Categories
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="absolute inset-0 bg-black/20"></div>
+      {/* Hero Carousel Section */}
+      <section className="relative">
+        <Carousel className="w-full">
+          <CarouselContent>
+            {heroImages.map((slide) => (
+              <CarouselItem key={slide.id}>
+                <div className="relative h-[70vh] min-h-[500px]">
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <div className="text-center text-white max-w-2xl px-4">
+                      <h1 className="text-5xl font-bold mb-4 animate-fade-in">
+                        {slide.title}
+                      </h1>
+                      <p className="text-xl mb-8 text-gray-200 animate-fade-in">
+                        {slide.subtitle}
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
+                        <Link to="/collections">
+                          <Button size="lg" className="bg-white text-black hover:bg-gray-100">
+                            {slide.cta}
+                            <ArrowRight className="ml-2 w-5 h-5" />
+                          </Button>
+                        </Link>
+                        <Link to="/products">
+                          <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+                            View All Products
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-4" />
+          <CarouselNext className="right-4" />
+        </Carousel>
       </section>
 
       {/* Features Section */}

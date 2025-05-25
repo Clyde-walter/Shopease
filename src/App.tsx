@@ -12,6 +12,10 @@ import { Collections } from "@/pages/Collections";
 import { Checkout } from "@/pages/Checkout";
 import { Orders } from "@/pages/Orders";
 import { Admin } from "@/pages/Admin";
+import { Cart } from "@/pages/Cart";
+import { Profile } from "@/pages/Profile";
+import { Wishlist } from "@/pages/Wishlist";
+import { ProfileSettings } from "@/pages/ProfileSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,9 +34,13 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/collections" element={<Collections />} />
+                <Route path="/cart" element={<Cart />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/orders/:orderId" element={<Orders />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/settings" element={<ProfileSettings />} />
+                <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/admin" element={<Admin />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

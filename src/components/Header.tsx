@@ -60,14 +60,6 @@ export function Header() {
               >
                 Orders
               </Link>
-              <Link
-                to="/admin"
-                className={`font-medium transition-colors hover:text-ecommerce-600 ${
-                  isActive('/admin') ? 'text-ecommerce-600' : 'text-gray-700'
-                }`}
-              >
-                Admin
-              </Link>
             </nav>
 
             {/* Actions */}
@@ -81,23 +73,26 @@ export function Header() {
                 <Search className="w-5 h-5" />
               </Button>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsCartOpen(true)}
-                className="relative hover:bg-ecommerce-50"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {cartItemsCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-ecommerce-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce-subtle">
-                    {cartItemsCount}
-                  </span>
-                )}
-              </Button>
+              <Link to="/cart">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative hover:bg-ecommerce-50"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  {cartItemsCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-ecommerce-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce-subtle">
+                      {cartItemsCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
 
-              <Button variant="ghost" size="icon" className="hover:bg-ecommerce-50">
-                <User className="w-5 h-5" />
-              </Button>
+              <Link to="/profile">
+                <Button variant="ghost" size="icon" className="hover:bg-ecommerce-50">
+                  <User className="w-5 h-5" />
+                </Button>
+              </Link>
             </div>
           </div>
 
