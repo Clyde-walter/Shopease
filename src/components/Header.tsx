@@ -5,6 +5,7 @@ import { ShoppingCart, User, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/contexts/StoreContext';
 import { CartSidebar } from './CartSidebar';
+import { LanguageSelector } from './LanguageSelector';
 
 export function Header() {
   const location = useLocation();
@@ -60,10 +61,20 @@ export function Header() {
               >
                 Orders
               </Link>
+              <Link
+                to="/live-map"
+                className={`font-medium transition-colors hover:text-ecommerce-600 ${
+                  isActive('/live-map') ? 'text-ecommerce-600' : 'text-gray-700'
+                }`}
+              >
+                Live Map
+              </Link>
             </nav>
 
             {/* Actions */}
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
+              
               <Button
                 variant="ghost"
                 size="icon"

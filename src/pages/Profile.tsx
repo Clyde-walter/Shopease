@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { User, ShoppingBag, Heart, Settings, CreditCard, MapPin, Phone, Mail } from 'lucide-react';
+import { User, ShoppingBag, Heart, Settings, CreditCard, MapPin, Phone, Mail, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -56,13 +56,13 @@ export function Profile() {
                     Account Settings
                   </Button>
                 </Link>
-                <Link to="/profile/addresses">
+                <Link to="/manage-addresses">
                   <Button variant="outline" className="w-full justify-start">
                     <MapPin className="w-4 h-4 mr-2" />
                     Manage Addresses
                   </Button>
                 </Link>
-                <Link to="/profile/payment">
+                <Link to="/payment-methods">
                   <Button variant="outline" className="w-full justify-start">
                     <CreditCard className="w-4 h-4 mr-2" />
                     Payment Methods
@@ -108,9 +108,12 @@ export function Profile() {
                     </div>
                   </div>
                 </div>
-                <Button className="mt-4 bg-ecommerce-600 hover:bg-ecommerce-700">
-                  Edit Information
-                </Button>
+                <Link to="/edit-information">
+                  <Button className="mt-4 bg-ecommerce-600 hover:bg-ecommerce-700">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Information
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -169,7 +172,7 @@ export function Profile() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Saved Addresses</CardTitle>
-                  <Link to="/profile/addresses">
+                  <Link to="/manage-addresses">
                     <Button variant="outline" size="sm">Manage</Button>
                   </Link>
                 </div>
