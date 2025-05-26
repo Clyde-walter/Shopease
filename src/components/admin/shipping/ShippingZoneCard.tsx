@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, Edit } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShippingMethodsTable } from './ShippingMethodsTable';
@@ -25,10 +25,20 @@ interface ShippingZone {
 interface ShippingZoneCardProps {
   zone: ShippingZone;
   onEditZone: (zone: ShippingZone) => void;
+  onDeleteZone: (zoneId: string) => void;
   onAddMethod: (zoneId: string) => void;
+  onEditMethod: (zoneId: string, methodId: string, updates: Partial<ShippingMethod>) => void;
+  onDeleteMethod: (zoneId: string, methodId: string) => void;
 }
 
-export function ShippingZoneCard({ zone, onEditZone, onAddMethod }: ShippingZoneCardProps) {
+export function ShippingZoneCard({ 
+  zone, 
+  onEditZone, 
+  onDeleteZone, 
+  onAddMethod, 
+  onEditMethod, 
+  onDeleteMethod 
+}: ShippingZoneCardProps) {
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -54,11 +64,24 @@ export function ShippingZoneCard({ zone, onEditZone, onAddMethod }: ShippingZone
               <Plus className="w-4 h-4 mr-2" />
               Add Method
             </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => onDeleteZone(zone.id)}
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Zone
+            </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <ShippingMethodsTable methods={zone.methods} />
+        <ShippingMethodsTable 
+          methods={zone.methods} 
+          onEditMethod={(methodId, updates) => onEditMethod(zone.id, methodId, updates)}
+          onDeleteMethod={(methodId) => onDeleteMethod(zone.id, methodId)}
+        />
       </CardContent>
     </Card>
   );

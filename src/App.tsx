@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -39,6 +40,8 @@ import { Warranty } from "@/pages/Warranty";
 import { Privacy } from "@/pages/Privacy";
 import { Terms } from "@/pages/Terms";
 import { Cookies } from "@/pages/Cookies";
+import { Notifications } from "@/pages/Notifications";
+import { Chat } from "@/pages/Chat";
 import NotFound from "./pages/NotFound";
 import { CustomerCareButton } from "@/components/CustomerCareButton";
 
@@ -95,6 +98,8 @@ const App = () => (
                     <Route path="/privacy" element={<Privacy />} />
                     <Route path="/terms" element={<Terms />} />
                     <Route path="/cookies" element={<Cookies />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/chat" element={<Chat />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>

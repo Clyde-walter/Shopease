@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { Plus, Edit } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ShippingStats } from '@/components/admin/shipping/ShippingStats';
 import { ShippingZoneCard } from '@/components/admin/shipping/ShippingZoneCard';
 import { AddShippingZoneModal } from '@/components/admin/shipping/AddShippingZoneModal';
 import { EditShippingZoneModal } from '@/components/admin/shipping/EditShippingZoneModal';
 import { AddShippingMethodModal } from '@/components/admin/shipping/AddShippingMethodModal';
+import { toast } from '@/hooks/use-toast';
 
 interface ShippingZone {
   id: string;
@@ -109,6 +110,15 @@ export function AdminShipping() {
     );
   };
 
+  const handleDeleteZone = (zoneId: string) => {
+    if (window.confirm('Are you sure you want to delete this shipping zone?')) {
+      setShippingZones(zones => zones.filter(zone => zone.id !== zoneId));
+      toast({
+        title: "Shipping zone deleted successfully!"
+      });
+    }
+  };
+
   const handleAddMethod = (zoneId: string, newMethod: Omit<ShippingMethod, 'id'>) => {
     const method: ShippingMethod = {
       ...newMethod,
@@ -122,6 +132,42 @@ export function AdminShipping() {
           : zone
       )
     );
+  };
+
+  const handleEditMethod = (zoneId: string, methodId: string, updates: Partial<ShippingMethod>) => {
+    setShippingZones(zones => 
+      zones.map(zone => 
+        zone.id === zoneId 
+          ? { 
+              ...zone, 
+              methods: zone.methods.map(method => 
+                method.id === methodId ? { ...method, ...updates } : method
+              ) 
+            }
+          : zone
+      )
+    );
+    toast({
+      title: "Shipping method updated successfully!"
+    });
+  };
+
+  const handleDeleteMethod = (zoneId: string, methodId: string) => {
+    if (window.confirm('Are you sure you want to delete this shipping method?')) {
+      setShippingZones(zones => 
+        zones.map(zone => 
+          zone.id === zoneId 
+            ? { 
+                ...zone, 
+                methods: zone.methods.filter(method => method.id !== methodId) 
+              }
+            : zone
+        )
+      );
+      toast({
+        title: "Shipping method deleted successfully!"
+      });
+    }
   };
 
   const handleEditZoneClick = (zone: ShippingZone) => {
@@ -151,11 +197,6 @@ export function AdminShipping() {
           <Plus className="w-4 h-4 mr-2" />
           Add Shipping Zone
         </Button>
-        
-        <Button variant="outline">
-          <Edit className="w-4 h-4 mr-2" />
-          Bulk Edit
-        </Button>
       </div>
 
       {shippingZones.map((zone) => (
@@ -163,7 +204,10 @@ export function AdminShipping() {
           key={zone.id}
           zone={zone}
           onEditZone={handleEditZoneClick}
+          onDeleteZone={handleDeleteZone}
           onAddMethod={handleAddMethodClick}
+          onEditMethod={handleEditMethod}
+          onDeleteMethod={handleDeleteMethod}
         />
       ))}
 
