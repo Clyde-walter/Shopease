@@ -6,8 +6,52 @@ import { PaymentSettings } from '@/components/admin/settings/PaymentSettings';
 import { NotificationSettings } from '@/components/admin/settings/NotificationSettings';
 import { SecuritySettings } from '@/components/admin/settings/SecuritySettings';
 import { IntegrationSettings } from '@/components/admin/settings/IntegrationSettings';
+import { getFromLocalStorage } from '@/utils/adminSettings';
 
 export function AdminSettings() {
+  // Store settings state
+  const [storeSettings, setStoreSettings] = useState(() => 
+    getFromLocalStorage('storeSettings', {
+      storeName: 'ShopEase',
+      storeDescription: 'Premium fashion and lifestyle products',
+      storeEmail: 'admin@shopease.com',
+      storePhone: '+1 (555) 123-4567',
+      currency: 'USD',
+      timezone: 'America/New_York',
+      taxRate: 8.5
+    })
+  );
+
+  // Payment settings state
+  const [paymentSettings, setPaymentSettings] = useState(() =>
+    getFromLocalStorage('paymentSettings', {
+      stripeEnabled: true,
+      paypalEnabled: false,
+      stripeApiKey: ''
+    })
+  );
+  const [showApiKey, setShowApiKey] = useState(false);
+
+  // Notification settings state
+  const [notifications, setNotifications] = useState(() =>
+    getFromLocalStorage('notificationSettings', {
+      newOrders: true,
+      lowStock: true,
+      customerReviews: true,
+      marketingUpdates: false
+    })
+  );
+
+  // Security settings state
+  const [securitySettings, setSecuritySettings] = useState(() =>
+    getFromLocalStorage('securitySettings', {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+      twoFactorEnabled: false
+    })
+  );
+
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -16,7 +60,7 @@ export function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
@@ -25,19 +69,33 @@ export function AdminSettings() {
         </TabsList>
 
         <TabsContent value="general">
-          <GeneralSettings />
+          <GeneralSettings 
+            storeSettings={storeSettings}
+            setStoreSettings={setStoreSettings}
+          />
         </TabsContent>
 
         <TabsContent value="payments">
-          <PaymentSettings />
+          <PaymentSettings 
+            paymentSettings={paymentSettings}
+            setPaymentSettings={setPaymentSettings}
+            showApiKey={showApiKey}
+            setShowApiKey={setShowApiKey}
+          />
         </TabsContent>
 
         <TabsContent value="notifications">
-          <NotificationSettings />
+          <NotificationSettings 
+            notifications={notifications}
+            setNotifications={setNotifications}
+          />
         </TabsContent>
 
         <TabsContent value="security">
-          <SecuritySettings />
+          <SecuritySettings 
+            securitySettings={securitySettings}
+            setSecuritySettings={setSecuritySettings}
+          />
         </TabsContent>
 
         <TabsContent value="integrations">
