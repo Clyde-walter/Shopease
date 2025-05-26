@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -41,6 +40,7 @@ import { Privacy } from "@/pages/Privacy";
 import { Terms } from "@/pages/Terms";
 import { Cookies } from "@/pages/Cookies";
 import NotFound from "./pages/NotFound";
+import { CustomerCareButton } from "@/components/CustomerCareButton";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +99,7 @@ const App = () => (
                   </Routes>
                 </main>
                 <Footer />
+                <CustomerCareButton />
               </div>
             } />
           </Routes>

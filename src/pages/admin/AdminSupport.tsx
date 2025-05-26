@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare, Send, Bot, User, Search, Filter, Eye, Check, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,40 +21,70 @@ interface CustomerMessage {
   createdAt: string;
   lastResponse?: string;
   aiSuggestion?: string;
+  responses: { id: string, message: string, sender: string, timestamp: string }[];
 }
 
 export function AdminSupport() {
-  const [messages, setMessages] = useState<CustomerMessage[]>([
-    {
-      id: '1',
-      customerName: 'John Doe',
-      customerEmail: 'john@example.com',
-      subject: 'Order delivery issue',
-      message: 'My order #ORD-123456 has not arrived yet. It has been 5 days since the expected delivery date.',
-      priority: 'high',
-      status: 'open',
-      createdAt: '2024-01-15T10:30:00Z',
-      aiSuggestion: 'Suggest checking tracking information and offer expedited replacement if package is lost.'
-    },
-    {
-      id: '2',
-      customerName: 'Jane Smith',
-      customerEmail: 'jane@example.com',
-      subject: 'Product return request',
-      message: 'I would like to return the wireless headphones I purchased last week. They are not working properly.',
-      priority: 'medium',
-      status: 'in-progress',
-      createdAt: '2024-01-14T14:20:00Z',
-      lastResponse: 'Return label has been sent to your email.',
-      aiSuggestion: 'Offer troubleshooting steps first, then process return if issue persists.'
-    }
-  ]);
-
+  const [messages, setMessages] = useState<CustomerMessage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [selectedMessage, setSelectedMessage] = useState<CustomerMessage | null>(null);
   const [responseText, setResponseText] = useState('');
+
+  // Load messages from localStorage on component mount
+  useEffect(() => {
+    const loadMessages = () => {
+      const storedMessages = JSON.parse(localStorage.getItem('customerMessages') || '[]');
+      const defaultMessages = [
+        {
+          id: '1',
+          customerName: 'John Doe',
+          customerEmail: 'john@example.com',
+          subject: 'Order delivery issue',
+          message: 'My order #ORD-123456 has not arrived yet. It has been 5 days since the expected delivery date.',
+          priority: 'high' as const,
+          status: 'open' as const,
+          createdAt: '2024-01-15T10:30:00Z',
+          aiSuggestion: 'Suggest checking tracking information and offer expedited replacement if package is lost.',
+          responses: []
+        },
+        {
+          id: '2',
+          customerName: 'Jane Smith',
+          customerEmail: 'jane@example.com',
+          subject: 'Product return request',
+          message: 'I would like to return the wireless headphones I purchased last week. They are not working properly.',
+          priority: 'medium' as const,
+          status: 'in-progress' as const,
+          createdAt: '2024-01-14T14:20:00Z',
+          lastResponse: 'Return label has been sent to your email.',
+          aiSuggestion: 'Offer troubleshooting steps first, then process return if issue persists.',
+          responses: [
+            {
+              id: 'resp1',
+              message: 'Return label has been sent to your email.',
+              sender: 'admin' as const,
+              timestamp: '2024-01-14T15:30:00Z'
+            }
+          ]
+        }
+      ];
+      
+      const allMessages = [...defaultMessages, ...storedMessages];
+      setMessages(allMessages);
+    };
+
+    loadMessages();
+
+    // Listen for storage changes to sync across tabs
+    const handleStorageChange = () => {
+      loadMessages();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const filteredMessages = messages.filter(message => {
     const matchesSearch = 
@@ -86,23 +115,48 @@ export function AdminSupport() {
   };
 
   const handleStatusUpdate = (messageId: string, newStatus: CustomerMessage['status']) => {
-    setMessages(messages.map(msg => 
+    const updatedMessages = messages.map(msg => 
       msg.id === messageId ? { ...msg, status: newStatus } : msg
-    ));
+    );
+    setMessages(updatedMessages);
+    
+    // Update localStorage
+    const customerMessages = updatedMessages.filter(msg => !['1', '2'].includes(msg.id));
+    localStorage.setItem('customerMessages', JSON.stringify(customerMessages));
+    
+    const order = messages.find(o => o.id === messageId);
     toast({
       title: "Status updated!",
-      description: `Message status changed to ${newStatus}`
+      description: `Message from ${order?.customerName || messageId} status changed to ${newStatus}`
     });
   };
 
   const handleSendResponse = () => {
     if (!selectedMessage || !responseText.trim()) return;
 
-    setMessages(messages.map(msg => 
+    const newResponse = {
+      id: Date.now().toString(),
+      message: responseText,
+      sender: 'admin' as const,
+      timestamp: new Date().toISOString()
+    };
+
+    const updatedMessages = messages.map(msg => 
       msg.id === selectedMessage.id 
-        ? { ...msg, lastResponse: responseText, status: 'in-progress' as const }
+        ? { 
+            ...msg, 
+            lastResponse: responseText, 
+            status: 'in-progress' as const,
+            responses: [...(msg.responses || []), newResponse]
+          }
         : msg
-    ));
+    );
+    
+    setMessages(updatedMessages);
+
+    // Update localStorage for customer messages
+    const customerMessages = updatedMessages.filter(msg => !['1', '2'].includes(msg.id));
+    localStorage.setItem('customerMessages', JSON.stringify(customerMessages));
 
     toast({
       title: "Response sent!",
