@@ -14,16 +14,18 @@ export function AdminOrders() {
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
       order.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerInfo.name.toLowerCase().includes(searchTerm.toLowerCase());
+      order.customerInfo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
     updateOrderStatus(orderId, newStatus as any);
+    const order = orders.find(o => o.id === orderId);
     toast({
       title: "Order status updated!",
-      description: `Order ${orderId} status changed to ${newStatus}`
+      description: `Order ${order?.orderNumber || orderId} status changed to ${newStatus}`
     });
   };
 

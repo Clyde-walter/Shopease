@@ -11,7 +11,8 @@ import {
   Tag,
   Truck,
   Home,
-  LogOut
+  LogOut,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,6 +27,7 @@ function AdminLayoutContent() {
     { icon: Tag, label: 'Collections', path: '/admin/collections' },
     { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
     { icon: Users, label: 'Customers', path: '/admin/customers' },
+    { icon: MessageSquare, label: 'Support', path: '/admin/support' },
     { icon: Truck, label: 'Shipping', path: '/admin/shipping' },
     { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
     { icon: Settings, label: 'Settings', path: '/admin/settings' },

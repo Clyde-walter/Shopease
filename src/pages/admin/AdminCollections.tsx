@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Tag, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Tag, Search, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ export function AdminCollections() {
       name: 'Summer Collection',
       description: 'Fresh summer styles for the season',
       productCount: 12,
-      image: '/placeholder.svg',
+      images: ['/placeholder.svg'],
       status: 'Active'
     },
     {
@@ -25,7 +25,7 @@ export function AdminCollections() {
       name: 'Winter Collection',
       description: 'Cozy winter essentials',
       productCount: 8,
-      image: '/placeholder.svg',
+      images: ['/placeholder.svg'],
       status: 'Active'
     }
   ]);
@@ -36,12 +36,29 @@ export function AdminCollections() {
   const [collectionForm, setCollectionForm] = useState({
     name: '',
     description: '',
-    image: '/placeholder.svg'
+    images: ['/placeholder.svg']
   });
 
   const filteredCollections = collections.filter(collection =>
     collection.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newImages = Array.from(files).slice(0, 5).map(file => {
+        return URL.createObjectURL(file);
+      });
+      
+      const updatedImages = [...collectionForm.images.filter(img => img !== '/placeholder.svg'), ...newImages].slice(0, 5);
+      setCollectionForm({...collectionForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const updatedImages = collectionForm.images.filter((_, i) => i !== index);
+    setCollectionForm({...collectionForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+  };
 
   const handleCollectionSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +100,7 @@ export function AdminCollections() {
     setCollectionForm({
       name: '',
       description: '',
-      image: '/placeholder.svg'
+      images: ['/placeholder.svg']
     });
     setEditingCollection(null);
   };
@@ -93,7 +110,7 @@ export function AdminCollections() {
     setCollectionForm({
       name: collection.name,
       description: collection.description,
-      image: collection.image
+      images: collection.images || ['/placeholder.svg']
     });
     setIsCollectionDialogOpen(true);
   };
@@ -132,7 +149,7 @@ export function AdminCollections() {
               Add Collection
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingCollection ? 'Edit Collection' : 'Create New Collection'}
@@ -155,6 +172,49 @@ export function AdminCollections() {
                   placeholder="Enter collection description"
                   rows={3}
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Collection Images (Up to 5)</label>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="collection-image-upload"
+                    />
+                    <label htmlFor="collection-image-upload" className="cursor-pointer">
+                      <Button type="button" variant="outline" asChild>
+                        <span>
+                          <Upload className="w-4 h-4 mr-2" />
+                          Upload Images
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {collectionForm.images.map((image, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={image}
+                          alt={`Collection ${index + 1}`}
+                          className="w-full h-20 object-cover rounded border"
+                        />
+                        {collectionForm.images.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
               <Button type="submit" className="w-full">
                 {editingCollection ? 'Update Collection' : 'Create Collection'}
@@ -187,11 +247,21 @@ export function AdminCollections() {
                 <TableRow key={collection.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <img
-                        src={collection.image}
-                        alt={collection.name}
-                        className="w-12 h-12 object-cover rounded"
-                      />
+                      <div className="flex -space-x-2">
+                        {collection.images.slice(0, 3).map((image, idx) => (
+                          <img
+                            key={idx}
+                            src={image}
+                            alt={collection.name}
+                            className="w-10 h-10 object-cover rounded border-2 border-white"
+                          />
+                        ))}
+                        {collection.images.length > 3 && (
+                          <div className="w-10 h-10 bg-gray-200 rounded border-2 border-white flex items-center justify-center text-xs">
+                            +{collection.images.length - 3}
+                          </div>
+                        )}
+                      </div>
                       <div>
                         <div className="font-medium">{collection.name}</div>
                         <div className="text-sm text-gray-500">{collection.description}</div>
