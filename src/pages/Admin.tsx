@@ -3,9 +3,8 @@ import React from 'react';
 import { Package, DollarSign, ShoppingCart, Users, TrendingUp, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useStore } from '@/contexts/StoreContext';
-import { AuthGuard } from '@/components/AuthGuard';
 
-function AdminDashboard() {
+export function Admin() {
   const { products, orders } = useStore();
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
@@ -149,13 +148,5 @@ function AdminDashboard() {
         </Card>
       </div>
     </div>
-  );
-}
-
-export function Admin() {
-  return (
-    <AuthGuard>
-      <AdminDashboard />
-    </AuthGuard>
   );
 }

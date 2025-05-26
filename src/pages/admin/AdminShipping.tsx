@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AddShippingZoneModal } from '@/components/admin/shipping/AddShippingZoneModal';
+import { EditShippingZoneModal } from '@/components/admin/shipping/EditShippingZoneModal';
+import { AddShippingMethodModal } from '@/components/admin/shipping/AddShippingMethodModal';
 
 interface ShippingZone {
   id: string;
@@ -88,12 +87,59 @@ const mockShippingZones: ShippingZone[] = [
 export function AdminShipping() {
   const [shippingZones, setShippingZones] = useState<ShippingZone[]>(mockShippingZones);
   const [isAddZoneOpen, setIsAddZoneOpen] = useState(false);
+  const [isEditZoneOpen, setIsEditZoneOpen] = useState(false);
+  const [isAddMethodOpen, setIsAddMethodOpen] = useState(false);
+  const [selectedZone, setSelectedZone] = useState<ShippingZone | null>(null);
+  const [selectedZoneId, setSelectedZoneId] = useState<string>('');
 
   const totalShippingMethods = shippingZones.reduce((sum, zone) => sum + zone.methods.length, 0);
   const activeShippingMethods = shippingZones.reduce((sum, zone) => 
     sum + zone.methods.filter(method => method.isActive).length, 0);
   const avgShippingCost = shippingZones.reduce((sum, zone) => 
     sum + zone.methods.reduce((methodSum, method) => methodSum + method.cost, 0), 0) / totalShippingMethods;
+
+  const handleAddZone = (newZone: { name: string; regions: string[] }) => {
+    const zone: ShippingZone = {
+      id: Date.now().toString(),
+      name: newZone.name,
+      regions: newZone.regions,
+      methods: []
+    };
+    setShippingZones([...shippingZones, zone]);
+  };
+
+  const handleEditZone = (zoneId: string, updates: { name: string; regions: string[] }) => {
+    setShippingZones(zones => 
+      zones.map(zone => 
+        zone.id === zoneId ? { ...zone, ...updates } : zone
+      )
+    );
+  };
+
+  const handleAddMethod = (zoneId: string, newMethod: Omit<ShippingMethod, 'id'>) => {
+    const method: ShippingMethod = {
+      ...newMethod,
+      id: Date.now().toString()
+    };
+    
+    setShippingZones(zones => 
+      zones.map(zone => 
+        zone.id === zoneId 
+          ? { ...zone, methods: [...zone.methods, method] }
+          : zone
+      )
+    );
+  };
+
+  const handleEditZoneClick = (zone: ShippingZone) => {
+    setSelectedZone(zone);
+    setIsEditZoneOpen(true);
+  };
+
+  const handleAddMethodClick = (zoneId: string) => {
+    setSelectedZoneId(zoneId);
+    setIsAddMethodOpen(true);
+  };
 
   return (
     <div className="p-8">
@@ -155,30 +201,13 @@ export function AdminShipping() {
 
       {/* Action Buttons */}
       <div className="flex gap-4 mb-6">
-        <Dialog open={isAddZoneOpen} onOpenChange={setIsAddZoneOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Shipping Zone
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Shipping Zone</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="zoneName">Zone Name</Label>
-                <Input id="zoneName" placeholder="e.g., Europe" />
-              </div>
-              <div>
-                <Label htmlFor="regions">Regions (comma separated)</Label>
-                <Input id="regions" placeholder="e.g., FR, DE, IT" />
-              </div>
-              <Button className="w-full">Create Zone</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button 
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => setIsAddZoneOpen(true)}
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Shipping Zone
+        </Button>
         
         <Button variant="outline">
           <Edit className="w-4 h-4 mr-2" />
@@ -196,11 +225,19 @@ export function AdminShipping() {
                 <p className="text-sm text-gray-600">Regions: {zone.regions.join(', ')}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleEditZoneClick(zone)}
+                >
                   <Edit className="w-4 h-4 mr-2" />
                   Edit Zone
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleAddMethodClick(zone.id)}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Method
                 </Button>
@@ -259,6 +296,27 @@ export function AdminShipping() {
           </CardContent>
         </Card>
       ))}
+
+      {/* Modals */}
+      <AddShippingZoneModal
+        isOpen={isAddZoneOpen}
+        onOpenChange={setIsAddZoneOpen}
+        onAddZone={handleAddZone}
+      />
+
+      <EditShippingZoneModal
+        isOpen={isEditZoneOpen}
+        onOpenChange={setIsEditZoneOpen}
+        zone={selectedZone}
+        onEditZone={handleEditZone}
+      />
+
+      <AddShippingMethodModal
+        isOpen={isAddMethodOpen}
+        onOpenChange={setIsAddMethodOpen}
+        zoneId={selectedZoneId}
+        onAddMethod={handleAddMethod}
+      />
     </div>
   );
 }
