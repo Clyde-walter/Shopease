@@ -76,6 +76,10 @@ export function CustomerCareButton() {
     setIsOpen(false);
   };
 
+  const handlePriorityChange = (value: string) => {
+    setPriority(value as 'low' | 'medium' | 'high');
+  };
+
   return (
     <>
       {/* Floating Button */}
@@ -160,7 +164,7 @@ export function CustomerCareButton() {
                 
                 <div>
                   <label className="text-sm font-medium mb-1 block">Priority</label>
-                  <Select value={priority} onValueChange={setPriority}>
+                  <Select value={priority} onValueChange={handlePriorityChange}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
