@@ -25,6 +25,7 @@ import { AdminSupport } from "@/pages/admin/AdminSupport";
 import { AdminShipping } from "@/pages/admin/AdminShipping";
 import { AdminAnalytics } from "@/pages/admin/AdminAnalytics";
 import { AdminSettings } from "@/pages/admin/AdminSettings";
+import { AdminEmails } from "@/pages/admin/AdminEmails";
 import { Cart } from "@/pages/Cart";
 import { Profile } from "@/pages/Profile";
 import { Wishlist } from "@/pages/Wishlist";
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="support" element={<AdminSupport />} />
               <Route path="shipping" element={<AdminShipping />} />
               <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="emails" element={<AdminEmails />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
 
