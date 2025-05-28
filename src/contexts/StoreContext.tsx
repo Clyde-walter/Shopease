@@ -75,8 +75,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <ChatProvider>
       <NotificationsProvider>
-        <LocationProvider>
-          <LanguageProvider>
+        <LanguageProvider>
+          <LocationProvider>
             <ProductsProvider>
               <CartProvider>
                 <WishlistProvider>
@@ -88,8 +88,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
                 </WishlistProvider>
               </CartProvider>
             </ProductsProvider>
-          </LanguageProvider>
-        </LocationProvider>
+          </LocationProvider>
+        </LanguageProvider>
       </NotificationsProvider>
     </ChatProvider>
   );
