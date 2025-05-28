@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { MapPin, Package, Truck, Clock, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -99,6 +100,7 @@ export function LiveMap() {
 
   const currentOrder = selectedOrder ? orders.find(order => order.id === selectedOrder) : null;
   const orderLocation = selectedOrder ? getOrderLocation(selectedOrder) : undefined;
+  const trackingInfo = selectedOrder ? mockTrackingData[selectedOrder] : undefined;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -217,7 +219,7 @@ export function LiveMap() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Tracking #:</span>
-                  <span className="font-mono text-sm">{trackingInfo.trackingNumber || `TRK-${selectedOrder.slice(-6)}`}</span>
+                  <span className="font-mono text-sm">{trackingInfo?.trackingNumber || `TRK-${selectedOrder.slice(-6)}`}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Order Date:</span>
