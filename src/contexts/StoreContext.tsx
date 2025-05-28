@@ -74,8 +74,8 @@ function StoreContextProvider({ children }: { children: React.ReactNode }) {
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <ChatProvider>
-      <LocationProvider>
-        <NotificationsProvider>
+      <NotificationsProvider>
+        <LocationProvider>
           <LanguageProvider>
             <ProductsProvider>
               <CartProvider>
@@ -89,8 +89,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               </CartProvider>
             </ProductsProvider>
           </LanguageProvider>
-        </NotificationsProvider>
-      </LocationProvider>
+        </LocationProvider>
+      </NotificationsProvider>
     </ChatProvider>
   );
 }
