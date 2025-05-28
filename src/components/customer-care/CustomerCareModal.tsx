@@ -3,7 +3,7 @@ import React from 'react';
 import { MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CustomerCareForm } from './CustomerCareForm';
+import { CustomerCareChat } from './CustomerCareChat';
 
 interface CustomerCareModalProps {
   isOpen: boolean;
@@ -15,12 +15,12 @@ export function CustomerCareModal({ isOpen, onClose }: CustomerCareModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <Card className="w-full max-w-md mx-4 max-h-[90vh] overflow-hidden">
-        <CardHeader className="bg-blue-600 text-white">
+      <Card className="w-full max-w-lg mx-4 h-[600px] flex flex-col">
+        <CardHeader className="bg-blue-600 text-white flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5" />
-              Customer Care
+              Customer Care Chat
             </CardTitle>
             <Button
               variant="ghost"
@@ -32,12 +32,12 @@ export function CustomerCareModal({ isOpen, onClose }: CustomerCareModalProps) {
             </Button>
           </div>
           <p className="text-blue-100 text-sm">
-            How can we help you today?
+            Chat with our support team in real-time
           </p>
         </CardHeader>
         
-        <CardContent className="p-6">
-          <CustomerCareForm onSubmitSuccess={onClose} />
+        <CardContent className="flex-1 p-0">
+          <CustomerCareChat />
         </CardContent>
       </Card>
     </div>

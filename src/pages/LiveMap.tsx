@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MapPin, Package, Truck, Clock, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,9 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useStore } from '@/contexts/StoreContext';
+import { useLocation } from '@/contexts/LocationContext';
+import { OrderMap } from '@/components/map/OrderMap';
 
 export function LiveMap() {
   const { orders } = useStore();
+  const { getOrderLocation } = useLocation();
   const [selectedOrder, setSelectedOrder] = useState('');
   const [orderInput, setOrderInput] = useState('');
   const [orderFound, setOrderFound] = useState(false);
@@ -96,7 +98,7 @@ export function LiveMap() {
   };
 
   const currentOrder = selectedOrder ? orders.find(order => order.id === selectedOrder) : null;
-  const trackingInfo = mockTrackingData[selectedOrder] || {};
+  const orderLocation = selectedOrder ? getOrderLocation(selectedOrder) : undefined;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -173,23 +175,18 @@ export function LiveMap() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="w-16 h-16 mx-auto text-ecommerce-600 mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Interactive Map</h3>
-                    <p className="text-gray-600 mb-2">
-                      Real-time tracking map for order {selectedOrder}
+                <OrderMap
+                  coordinates={orderLocation?.coordinates}
+                  location={orderLocation?.currentLocation}
+                  orderId={selectedOrder}
+                />
+                {orderLocation && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-sm text-green-800">
+                      <strong>Last Updated:</strong> {new Date(orderLocation.lastUpdated).toLocaleString()}
                     </p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Current Location: {trackingInfo.currentLocation || 'Processing Center'}
-                    </p>
-                    {trackingInfo.coordinates && (
-                      <p className="text-xs text-gray-400 mt-1">
-                        Coordinates: {trackingInfo.coordinates.lat}, {trackingInfo.coordinates.lng}
-                      </p>
-                    )}
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -258,13 +255,13 @@ export function LiveMap() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {(trackingInfo.timeline || [
+                  {[
                     { status: 'Order Placed', time: currentOrder.createdAt, completed: true },
                     { status: 'Processing', time: '', completed: currentOrder.status !== 'pending' },
                     { status: 'Shipped', time: '', completed: ['shipped', 'delivered'].includes(currentOrder.status) },
-                    { status: 'In Transit', time: '', completed: currentOrder.status === 'delivered' },
+                    { status: 'In Transit', time: orderLocation?.lastUpdated || '', completed: currentOrder.status === 'delivered' || !!orderLocation },
                     { status: 'Delivered', time: '', completed: currentOrder.status === 'delivered' }
-                  ]).map((item: any, index: number) => (
+                  ].map((item, index) => (
                     <div key={index} className="flex items-start space-x-3">
                       <div className={`w-3 h-3 rounded-full mt-1 ${
                         item.completed ? 'bg-ecommerce-600' : 'bg-gray-300'
