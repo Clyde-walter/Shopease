@@ -22,12 +22,15 @@ export function AdminSettings() {
     })
   );
 
-  // Payment settings state
+  // Payment settings state with Paystack support
   const [paymentSettings, setPaymentSettings] = useState(() =>
     getFromLocalStorage('paymentSettings', {
       stripeEnabled: true,
       paypalEnabled: false,
-      stripeApiKey: ''
+      paystackEnabled: false,
+      stripeApiKey: '',
+      paystackPublicKey: '',
+      paystackSecretKey: ''
     })
   );
   const [showApiKey, setShowApiKey] = useState(false);
@@ -60,7 +63,7 @@ export function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>

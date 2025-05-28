@@ -13,7 +13,10 @@ import { saveToLocalStorage } from '@/utils/adminSettings';
 interface PaymentSettingsType {
   stripeEnabled: boolean;
   paypalEnabled: boolean;
+  paystackEnabled: boolean;
   stripeApiKey: string;
+  paystackPublicKey: string;
+  paystackSecretKey: string;
 }
 
 interface PaymentSettingsProps {
@@ -29,6 +32,8 @@ export function PaymentSettings({
   showApiKey, 
   setShowApiKey 
 }: PaymentSettingsProps) {
+  const [showPaystackKeys, setShowPaystackKeys] = React.useState(false);
+
   const handleSavePayments = () => {
     saveToLocalStorage('paymentSettings', paymentSettings);
     toast({
@@ -59,6 +64,7 @@ export function PaymentSettings({
               onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, stripeEnabled: checked})}
             />
           </div>
+          
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -74,27 +80,88 @@ export function PaymentSettings({
               onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, paypalEnabled: checked})}
             />
           </div>
-        </div>
-        <Separator />
-        <div>
-          <Label htmlFor="stripeKey">Stripe API Key</Label>
-          <div className="flex gap-2 mt-2">
-            <Input
-              id="stripeKey"
-              type={showApiKey ? "text" : "password"}
-              placeholder="sk_test_..."
-              className="flex-1"
-              value={paymentSettings.stripeApiKey}
-              onChange={(e) => setPaymentSettings({...paymentSettings, stripeApiKey: e.target.value})}
+
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                🏦
+              </div>
+              <div>
+                <p className="font-medium">Paystack</p>
+                <p className="text-sm text-gray-600">African payment gateway - Cards, Bank transfers, Mobile money</p>
+              </div>
+            </div>
+            <Switch 
+              checked={paymentSettings.paystackEnabled}
+              onCheckedChange={(checked) => setPaymentSettings({...paymentSettings, paystackEnabled: checked})}
             />
-            <Button
-              variant="outline"
-              onClick={() => setShowApiKey(!showApiKey)}
-            >
-              {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
           </div>
         </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="stripeKey">Stripe API Key</Label>
+            <div className="flex gap-2 mt-2">
+              <Input
+                id="stripeKey"
+                type={showApiKey ? "text" : "password"}
+                placeholder="sk_test_..."
+                className="flex-1"
+                value={paymentSettings.stripeApiKey}
+                onChange={(e) => setPaymentSettings({...paymentSettings, stripeApiKey: e.target.value})}
+              />
+              <Button
+                variant="outline"
+                onClick={() => setShowApiKey(!showApiKey)}
+              >
+                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="paystackPublicKey">Paystack Public Key</Label>
+            <div className="flex gap-2 mt-2">
+              <Input
+                id="paystackPublicKey"
+                type={showPaystackKeys ? "text" : "password"}
+                placeholder="pk_test_..."
+                className="flex-1"
+                value={paymentSettings.paystackPublicKey}
+                onChange={(e) => setPaymentSettings({...paymentSettings, paystackPublicKey: e.target.value})}
+              />
+              <Button
+                variant="outline"
+                onClick={() => setShowPaystackKeys(!showPaystackKeys)}
+              >
+                {showPaystackKeys ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="paystackSecretKey">Paystack Secret Key</Label>
+            <div className="flex gap-2 mt-2">
+              <Input
+                id="paystackSecretKey"
+                type={showPaystackKeys ? "text" : "password"}
+                placeholder="sk_test_..."
+                className="flex-1"
+                value={paymentSettings.paystackSecretKey}
+                onChange={(e) => setPaymentSettings({...paymentSettings, paystackSecretKey: e.target.value})}
+              />
+              <Button
+                variant="outline"
+                onClick={() => setShowPaystackKeys(!showPaystackKeys)}
+              >
+                {showPaystackKeys ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+        </div>
+        
         <Button onClick={handleSavePayments} className="bg-blue-600 hover:bg-blue-700">
           <Save className="w-4 h-4 mr-2" />
           Save Payment Settings
