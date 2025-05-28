@@ -1,6 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Order, CartItem } from '@/types/store';
+import { useNotifications } from './NotificationsContext';
+import { useLanguage } from './LanguageContext';
 
 interface OrdersContextType {
   orders: Order[];
@@ -12,6 +14,8 @@ const OrdersContext = createContext<OrdersContextType | undefined>(undefined);
 
 export function OrdersProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
+  const { addNotification } = useNotifications();
+  const { t } = useLanguage();
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -39,15 +43,34 @@ export function OrdersProvider({ children }: { children: React.ReactNode }) {
       customerInfo
     };
     setOrders(currentOrders => [...currentOrders, newOrder]);
+    
+    // Send notification for new order
+    addNotification({
+      title: t('notification.new.order'),
+      message: `${t('notification.order.created')} ${orderNumber}`,
+      type: 'success'
+    });
+    
     return newOrder;
   };
 
   const updateOrderStatus = (orderId: string, status: Order['status']) => {
-    setOrders(currentOrders =>
-      currentOrders.map(order =>
-        order.id === orderId ? { ...order, status } : order
-      )
-    );
+    setOrders(currentOrders => {
+      const updatedOrders = currentOrders.map(order => {
+        if (order.id === orderId) {
+          // Send notification for status change
+          addNotification({
+            title: t('notification.order.status.changed'),
+            message: `${t('order.status')}: ${orderId} - ${t(`status.${status}`)}`,
+            type: 'info'
+          });
+          
+          return { ...order, status };
+        }
+        return order;
+      });
+      return updatedOrders;
+    });
   };
 
   return (

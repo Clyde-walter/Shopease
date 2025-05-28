@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext } from 'react';
 import { ProductsProvider, useProducts } from './ProductsContext';
 import { CartProvider, useCart } from './CartContext';
@@ -6,6 +7,7 @@ import { OrdersProvider, useOrders } from './OrdersContext';
 import { NotificationsProvider } from './NotificationsContext';
 import { ChatProvider } from './ChatContext';
 import { LocationProvider } from './LocationContext';
+import { LanguageProvider } from './LanguageContext';
 import { Product, CartItem, WishlistItem, Order } from '@/types/store';
 
 interface StoreContextType {
@@ -71,23 +73,25 @@ function StoreContextProvider({ children }: { children: React.ReactNode }) {
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
-    <ChatProvider>
-      <LocationProvider>
-        <NotificationsProvider>
-          <ProductsProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <OrdersProvider>
-                  <StoreContextProvider>
-                    {children}
-                  </StoreContextProvider>
-                </OrdersProvider>
-              </WishlistProvider>
-            </CartProvider>
-          </ProductsProvider>
-        </NotificationsProvider>
-      </LocationProvider>
-    </ChatProvider>
+    <LanguageProvider>
+      <ChatProvider>
+        <LocationProvider>
+          <NotificationsProvider>
+            <ProductsProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <OrdersProvider>
+                    <StoreContextProvider>
+                      {children}
+                    </StoreContextProvider>
+                  </OrdersProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </ProductsProvider>
+          </NotificationsProvider>
+        </LocationProvider>
+      </ChatProvider>
+    </LanguageProvider>
   );
 }
 

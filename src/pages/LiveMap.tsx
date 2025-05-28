@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useStore } from '@/contexts/StoreContext';
 import { useLocation } from '@/contexts/LocationContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { OrderMap } from '@/components/map/OrderMap';
 
 export function LiveMap() {
   const { orders } = useStore();
   const { getOrderLocation } = useLocation();
+  const { t } = useLanguage();
   const [selectedOrder, setSelectedOrder] = useState('');
   const [orderInput, setOrderInput] = useState('');
   const [orderFound, setOrderFound] = useState(false);
@@ -104,17 +106,17 @@ export function LiveMap() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Live Order Tracking</h1>
+      <h1 className="text-3xl font-bold mb-8">{t('livemap.title')}</h1>
       
       {/* Order Input Section */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Track Your Order</CardTitle>
+          <CardTitle>{t('livemap.track.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex space-x-4">
             <Input
-              placeholder="Enter your order number (e.g., ORD-123456)"
+              placeholder={t('livemap.input.placeholder')}
               value={orderInput}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
@@ -126,7 +128,7 @@ export function LiveMap() {
               disabled={!orderInput.trim()}
             >
               <Search className="w-4 h-4 mr-2" />
-              Track Order
+              {t('livemap.track.button')}
             </Button>
           </div>
           
@@ -135,7 +137,7 @@ export function LiveMap() {
             <Alert className="mt-4 border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-700">
-                Order number "{orderInput.trim().toUpperCase()}" not found. Please check your order number and try again.
+                {t('livemap.error.notfound').replace('ORDER_NUMBER', orderInput.trim().toUpperCase())}
               </AlertDescription>
             </Alert>
           )}
@@ -143,7 +145,7 @@ export function LiveMap() {
           {/* Available orders hint */}
           {orders.length > 0 && (
             <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700 font-medium mb-2">Your recent orders:</p>
+              <p className="text-sm text-blue-700 font-medium mb-2">{t('livemap.recent.orders')}</p>
               <div className="flex flex-wrap gap-2">
                 {orders.slice(-5).map((order) => (
                   <button
@@ -173,7 +175,7 @@ export function LiveMap() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <MapPin className="w-5 h-5 mr-2" />
-                  Live Location Tracking
+                  {t('livemap.location.tracking')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -185,7 +187,7 @@ export function LiveMap() {
                 {orderLocation && (
                   <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                     <p className="text-sm text-green-800">
-                      <strong>Last Updated:</strong> {new Date(orderLocation.lastUpdated).toLocaleString()}
+                      <strong>{t('order.last.updated')}:</strong> {new Date(orderLocation.lastUpdated).toLocaleString()}
                     </p>
                   </div>
                 )}
@@ -199,44 +201,44 @@ export function LiveMap() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Package className="w-5 h-5 mr-2" />
-                  Order Details
+                  {t('order.details')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Order ID:</span>
+                  <span className="font-medium">{t('order.id')}:</span>
                   <span className="font-mono text-sm">{selectedOrder}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Customer:</span>
+                  <span className="font-medium">{t('order.customer')}:</span>
                   <span>{currentOrder.customerInfo?.name || 'Customer'}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Status:</span>
+                  <span className="font-medium">{t('order.status')}:</span>
                   <Badge className={getStatusColor(currentOrder.status)}>
-                    {currentOrder.status.charAt(0).toUpperCase() + currentOrder.status.slice(1)}
+                    {t(`status.${currentOrder.status}`)}
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Tracking #:</span>
+                  <span className="font-medium">{t('order.tracking')}:</span>
                   <span className="font-mono text-sm">{trackingInfo?.trackingNumber || `TRK-${selectedOrder.slice(-6)}`}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Order Date:</span>
+                  <span className="font-medium">{t('order.date')}:</span>
                   <span className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
                     {new Date(currentOrder.createdAt).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Carrier:</span>
+                  <span className="font-medium">{t('order.carrier')}:</span>
                   <span className="flex items-center">
                     <Truck className="w-4 h-4 mr-1" />
                     Express Delivery
                   </span>
                 </div>
                 <div>
-                  <span className="font-medium">Items:</span>
+                  <span className="font-medium">{t('order.items')}:</span>
                   <ul className="text-sm text-gray-600 mt-1">
                     {currentOrder.items.map((item, index) => (
                       <li key={index} className="ml-2">• {item.product.name} (x{item.quantity})</li>
@@ -244,7 +246,7 @@ export function LiveMap() {
                   </ul>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Total:</span>
+                  <span className="font-medium">{t('order.total')}:</span>
                   <span className="font-semibold">${currentOrder.total.toFixed(2)}</span>
                 </div>
               </CardContent>
@@ -253,16 +255,16 @@ export function LiveMap() {
             {/* Timeline */}
             <Card>
               <CardHeader>
-                <CardTitle>Delivery Timeline</CardTitle>
+                <CardTitle>{t('order.timeline')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { status: 'Order Placed', time: currentOrder.createdAt, completed: true },
-                    { status: 'Processing', time: '', completed: currentOrder.status !== 'pending' },
-                    { status: 'Shipped', time: '', completed: ['shipped', 'delivered'].includes(currentOrder.status) },
-                    { status: 'In Transit', time: orderLocation?.lastUpdated || '', completed: currentOrder.status === 'delivered' || !!orderLocation },
-                    { status: 'Delivered', time: '', completed: currentOrder.status === 'delivered' }
+                    { status: 'pending', time: currentOrder.createdAt, completed: true },
+                    { status: 'processing', time: '', completed: currentOrder.status !== 'pending' },
+                    { status: 'shipped', time: '', completed: ['shipped', 'delivered'].includes(currentOrder.status) },
+                    { status: 'in-transit', time: orderLocation?.lastUpdated || '', completed: currentOrder.status === 'delivered' || !!orderLocation },
+                    { status: 'delivered', time: '', completed: currentOrder.status === 'delivered' }
                   ].map((item, index) => (
                     <div key={index} className="flex items-start space-x-3">
                       <div className={`w-3 h-3 rounded-full mt-1 ${
@@ -272,7 +274,7 @@ export function LiveMap() {
                         <p className={`font-medium ${
                           item.completed ? 'text-ecommerce-600' : 'text-gray-500'
                         }`}>
-                          {item.status}
+                          {t(`status.${item.status}`)}
                         </p>
                         {item.time && (
                           <p className="text-sm text-gray-500">

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -21,12 +22,11 @@ const languages = [
 ];
 
 export function LanguageSelector() {
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const { currentLanguage, changeLanguage } = useLanguage();
+  const selectedLanguage = languages.find(lang => lang.code === currentLanguage) || languages[0];
 
   const handleLanguageChange = (language: typeof languages[0]) => {
-    setSelectedLanguage(language);
-    // In a real app, this would trigger a translation system
-    console.log(`Language changed to: ${language.name}`);
+    changeLanguage(language.code);
   };
 
   return (
@@ -48,6 +48,9 @@ export function LanguageSelector() {
           >
             <span className="text-lg">{language.flag}</span>
             <span>{language.name}</span>
+            {selectedLanguage.code === language.code && (
+              <span className="ml-auto text-ecommerce-600">✓</span>
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

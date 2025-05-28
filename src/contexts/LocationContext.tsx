@@ -1,5 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNotifications } from './NotificationsContext';
+import { useLanguage } from './LanguageContext';
 
 interface OrderLocation {
   orderId: string;
@@ -21,6 +23,8 @@ const LocationContext = createContext<LocationContextType | undefined>(undefined
 
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [orderLocations, setOrderLocations] = useState<OrderLocation[]>([]);
+  const { addNotification } = useNotifications();
+  const { t } = useLanguage();
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -44,6 +48,13 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
         coordinates,
         lastUpdated: new Date().toISOString()
       };
+
+      // Send notification for location update
+      addNotification({
+        title: t('notification.order.location.updated'),
+        message: `${t('order.id')}: ${orderId} - ${t('order.location')}: ${location}`,
+        type: 'info'
+      });
 
       if (existingIndex >= 0) {
         const updated = [...currentLocations];
