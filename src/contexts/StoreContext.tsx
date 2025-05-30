@@ -1,6 +1,7 @@
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ProductsProvider, useProducts } from './ProductsContext';
+import { CollectionsProvider, useCollections } from './CollectionsContext';
 import { CartProvider, useCart } from './CartContext';
 import { WishlistProvider, useWishlist } from './WishlistContext';
 import { OrdersProvider, useOrders } from './OrdersContext';
@@ -9,9 +10,11 @@ import { ChatProvider } from './ChatContext';
 import { LocationProvider } from './LocationContext';
 import { LanguageProvider } from './LanguageContext';
 import { Product, CartItem, WishlistItem, Order } from '@/types/store';
+import { Collection } from './CollectionsContext';
 
 interface StoreContextType {
   products: Product[];
+  collections: Collection[];
   cart: CartItem[];
   wishlist: WishlistItem[];
   orders: Order[];
@@ -26,17 +29,37 @@ interface StoreContextType {
   addProduct: (product: Omit<Product, 'id'>) => void;
   updateProduct: (id: string, product: Partial<Product>) => void;
   deleteProduct: (id: string) => void;
+  addCollection: (collection: Omit<Collection, 'id'>) => void;
+  updateCollection: (id: string, collection: Partial<Collection>) => void;
+  deleteCollection: (id: string) => void;
   createOrder: (customerInfo: any) => Order;
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
+  lastUpdated: number;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 function StoreContextProvider({ children }: { children: React.ReactNode }) {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { collections, addCollection, updateCollection, deleteCollection } = useCollections();
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
   const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { orders, createOrder: createOrderBase, updateOrderStatus } = useOrders();
+  const [lastUpdated, setLastUpdated] = useState(Date.now());
+
+  // Listen for real-time updates
+  useEffect(() => {
+    const handleProductsUpdate = () => setLastUpdated(Date.now());
+    const handleCollectionsUpdate = () => setLastUpdated(Date.now());
+
+    window.addEventListener('productsUpdated', handleProductsUpdate);
+    window.addEventListener('collectionsUpdated', handleCollectionsUpdate);
+
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdate);
+      window.removeEventListener('collectionsUpdated', handleCollectionsUpdate);
+    };
+  }, []);
 
   const createOrder = (customerInfo: any): Order => {
     const order = createOrderBase(customerInfo, cart, getCartTotal());
@@ -48,6 +71,7 @@ function StoreContextProvider({ children }: { children: React.ReactNode }) {
     <StoreContext.Provider
       value={{
         products,
+        collections,
         cart,
         wishlist,
         orders,
@@ -62,8 +86,12 @@ function StoreContextProvider({ children }: { children: React.ReactNode }) {
         addProduct,
         updateProduct,
         deleteProduct,
+        addCollection,
+        updateCollection,
+        deleteCollection,
         createOrder,
-        updateOrderStatus
+        updateOrderStatus,
+        lastUpdated
       }}
     >
       {children}
@@ -78,15 +106,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         <LanguageProvider>
           <LocationProvider>
             <ProductsProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <OrdersProvider>
-                    <StoreContextProvider>
-                      {children}
-                    </StoreContextProvider>
-                  </OrdersProvider>
-                </WishlistProvider>
-              </CartProvider>
+              <CollectionsProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    <OrdersProvider>
+                      <StoreContextProvider>
+                        {children}
+                      </StoreContextProvider>
+                    </OrdersProvider>
+                  </WishlistProvider>
+                </CartProvider>
+              </CollectionsProvider>
             </ProductsProvider>
           </LocationProvider>
         </LanguageProvider>
@@ -104,4 +134,4 @@ export function useStore() {
 }
 
 // Re-export types for convenience
-export type { Product, CartItem, WishlistItem, Order };
+export type { Product, CartItem, WishlistItem, Order, Collection };

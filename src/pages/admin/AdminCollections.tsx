@@ -9,34 +9,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
+import { useStore } from '@/contexts/StoreContext';
 
 export function AdminCollections() {
-  const [collections, setCollections] = useState([
-    {
-      id: '1',
-      name: 'Summer Collection',
-      description: 'Fresh summer styles for the season',
-      productCount: 12,
-      images: ['/placeholder.svg'],
-      status: 'Active'
-    },
-    {
-      id: '2',
-      name: 'Winter Collection',
-      description: 'Cozy winter essentials',
-      productCount: 8,
-      images: ['/placeholder.svg'],
-      status: 'Active'
-    }
-  ]);
-
+  const { collections, addCollection, updateCollection, deleteCollection } = useStore();
   const [isCollectionDialogOpen, setIsCollectionDialogOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [collectionForm, setCollectionForm] = useState({
     name: '',
     description: '',
-    images: ['/placeholder.svg']
+    images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
   });
 
   const filteredCollections = collections.filter(collection =>
@@ -50,14 +33,14 @@ export function AdminCollections() {
         return URL.createObjectURL(file);
       });
       
-      const updatedImages = [...collectionForm.images.filter(img => img !== '/placeholder.svg'), ...newImages].slice(0, 5);
-      setCollectionForm({...collectionForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+      const updatedImages = [...collectionForm.images.filter(img => !img.includes('unsplash')), ...newImages].slice(0, 5);
+      setCollectionForm({...collectionForm, images: updatedImages.length > 0 ? updatedImages : ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']});
     }
   };
 
   const removeImage = (index: number) => {
     const updatedImages = collectionForm.images.filter((_, i) => i !== index);
-    setCollectionForm({...collectionForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+    setCollectionForm({...collectionForm, images: updatedImages.length > 0 ? updatedImages : ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']});
   };
 
   const handleCollectionSubmit = (e: React.FormEvent) => {
@@ -72,23 +55,24 @@ export function AdminCollections() {
     }
 
     const collectionData = {
-      ...collectionForm,
-      id: editingCollection ? editingCollection.id : Date.now().toString(),
+      name: collectionForm.name,
+      description: collectionForm.description,
+      images: collectionForm.images,
       productCount: editingCollection ? editingCollection.productCount : 0,
-      status: 'Active'
+      status: 'Active' as const
     };
 
     if (editingCollection) {
-      setCollections(collections.map(c => 
-        c.id === editingCollection.id ? collectionData : c
-      ));
+      updateCollection(editingCollection.id, collectionData);
       toast({
-        title: "Collection updated successfully!"
+        title: "Collection updated successfully!",
+        description: "Changes are now live across the store."
       });
     } else {
-      setCollections([...collections, collectionData]);
+      addCollection(collectionData);
       toast({
-        title: "Collection created successfully!"
+        title: "Collection created successfully!",
+        description: "New collection is now available in the store."
       });
     }
 
@@ -100,7 +84,7 @@ export function AdminCollections() {
     setCollectionForm({
       name: '',
       description: '',
-      images: ['/placeholder.svg']
+      images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
     });
     setEditingCollection(null);
   };
@@ -110,16 +94,17 @@ export function AdminCollections() {
     setCollectionForm({
       name: collection.name,
       description: collection.description,
-      images: collection.images || ['/placeholder.svg']
+      images: collection.images || ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
     });
     setIsCollectionDialogOpen(true);
   };
 
   const handleDelete = (collectionId: string) => {
-    if (window.confirm('Are you sure you want to delete this collection?')) {
-      setCollections(collections.filter(c => c.id !== collectionId));
+    if (window.confirm('Are you sure you want to delete this collection? This action cannot be undone.')) {
+      deleteCollection(collectionId);
       toast({
-        title: "Collection deleted successfully!"
+        title: "Collection deleted successfully!",
+        description: "Collection has been removed from the store."
       });
     }
   };
@@ -128,7 +113,7 @@ export function AdminCollections() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Collections Management</h1>
-        <p className="text-gray-600">Create and manage product collections</p>
+        <p className="text-gray-600">Create and manage product collections - changes update immediately across the store</p>
       </div>
 
       {/* Actions Bar */}

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, Truck, Shield, HeartHandshake, Star, TrendingUp, Sparkles, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,14 +8,31 @@ import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/ProductCard';
 import { useStore } from '@/contexts/StoreContext';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+
 export function Home() {
-  const {
-    products
-  } = useStore();
+  const { products, collections } = useStore();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Listen for real-time updates
+  useEffect(() => {
+    const handleUpdates = () => {
+      setRefreshKey(prev => prev + 1);
+    };
+
+    window.addEventListener('productsUpdated', handleUpdates);
+    window.addEventListener('collectionsUpdated', handleUpdates);
+
+    return () => {
+      window.removeEventListener('productsUpdated', handleUpdates);
+      window.removeEventListener('collectionsUpdated', handleUpdates);
+    };
+  }, []);
+
   const featuredProducts = products.slice(0, 3);
   const topRatedProducts = products.filter(product => product.price > 1000).slice(0, 4);
   const mostPurchasedProducts = products.slice(2, 6);
   const newArrivals = products.slice(0, 4);
+
   const heroImages = [{
     id: 1,
     title: "Elegant Diamond Collection",
@@ -34,24 +52,36 @@ export function Home() {
     image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
     cta: "Shop Silver"
   }];
-  const categories = [{
-    name: "Rings",
-    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop",
-    count: "120+ Items"
-  }, {
-    name: "Necklaces",
-    image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&h=300&fit=crop",
-    count: "85+ Items"
-  }, {
-    name: "Bracelets",
-    image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300&h=300&fit=crop",
-    count: "95+ Items"
-  }, {
-    name: "Earrings",
-    image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=300&h=300&fit=crop",
-    count: "110+ Items"
-  }];
-  return <div className="space-y-16">
+
+  // Use collections from context instead of hardcoded data
+  const categories = collections.length > 0 ? collections.slice(0, 4).map(collection => ({
+    name: collection.name,
+    image: collection.images[0] || "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop",
+    count: `${collection.productCount}+ Items`
+  })) : [
+    {
+      name: "Rings",
+      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop",
+      count: "120+ Items"
+    },
+    {
+      name: "Necklaces", 
+      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&h=300&fit=crop",
+      count: "85+ Items"
+    },
+    {
+      name: "Bracelets",
+      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300&h=300&fit=crop",
+      count: "95+ Items"
+    },
+    {
+      name: "Earrings",
+      image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=300&h=300&fit=crop",
+      count: "110+ Items"
+    }
+  ];
+
+  return <div className="space-y-16" key={refreshKey}>
       {/* Hero Carousel Section */}
       <section className="relative">
         <Carousel className="w-full">
