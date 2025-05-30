@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, Truck, Shield, HeartHandshake, Star, TrendingUp, Sparkles, Grid3X3 } from 'lucide-react';
@@ -7,82 +6,59 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ProductCard } from '@/components/ProductCard';
 import { useStore } from '@/contexts/StoreContext';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 export function Home() {
-  const { products } = useStore();
+  const {
+    products
+  } = useStore();
   const featuredProducts = products.slice(0, 3);
   const topRatedProducts = products.filter(product => product.price > 1000).slice(0, 4);
   const mostPurchasedProducts = products.slice(2, 6);
   const newArrivals = products.slice(0, 4);
-
-  const heroImages = [
-    {
-      id: 1,
-      title: "Elegant Diamond Collection",
-      subtitle: "Timeless beauty crafted to perfection",
-      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-      cta: "Shop Diamonds"
-    },
-    {
-      id: 2,
-      title: "Luxury Gold Jewelry",
-      subtitle: "Exquisite craftsmanship in every piece",
-      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-      cta: "Explore Gold"
-    },
-    {
-      id: 3,
-      title: "Sterling Silver Designs",
-      subtitle: "Modern elegance meets classic style",
-      image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-      cta: "Shop Silver"
-    }
-  ];
-
-  const categories = [
-    {
-      name: "Rings",
-      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop",
-      count: "120+ Items"
-    },
-    {
-      name: "Necklaces",
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&h=300&fit=crop",
-      count: "85+ Items"
-    },
-    {
-      name: "Bracelets",
-      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300&h=300&fit=crop",
-      count: "95+ Items"
-    },
-    {
-      name: "Earrings",
-      image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=300&h=300&fit=crop",
-      count: "110+ Items"
-    }
-  ];
-
-  return (
-    <div className="space-y-16">
+  const heroImages = [{
+    id: 1,
+    title: "Elegant Diamond Collection",
+    subtitle: "Timeless beauty crafted to perfection",
+    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+    cta: "Shop Diamonds"
+  }, {
+    id: 2,
+    title: "Luxury Gold Jewelry",
+    subtitle: "Exquisite craftsmanship in every piece",
+    image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+    cta: "Explore Gold"
+  }, {
+    id: 3,
+    title: "Sterling Silver Designs",
+    subtitle: "Modern elegance meets classic style",
+    image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+    cta: "Shop Silver"
+  }];
+  const categories = [{
+    name: "Rings",
+    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=300&fit=crop",
+    count: "120+ Items"
+  }, {
+    name: "Necklaces",
+    image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&h=300&fit=crop",
+    count: "85+ Items"
+  }, {
+    name: "Bracelets",
+    image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=300&h=300&fit=crop",
+    count: "95+ Items"
+  }, {
+    name: "Earrings",
+    image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=300&h=300&fit=crop",
+    count: "110+ Items"
+  }];
+  return <div className="space-y-16">
       {/* Hero Carousel Section */}
       <section className="relative">
         <Carousel className="w-full">
           <CarouselContent>
-            {heroImages.map((slide) => (
-              <CarouselItem key={slide.id}>
+            {heroImages.map(slide => <CarouselItem key={slide.id}>
                 <div className="relative h-[70vh] min-h-[500px]">
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={slide.image} alt={slide.title} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <div className="text-center text-white max-w-2xl px-4">
                       <h1 className="text-5xl font-bold mb-4 animate-fade-in">
@@ -99,7 +75,7 @@ export function Home() {
                           </Button>
                         </Link>
                         <Link to="/products">
-                          <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+                          <Button size="lg" variant="outline" className="border-white hover:bg-white text-gray-600">
                             View All Products
                           </Button>
                         </Link>
@@ -107,8 +83,7 @@ export function Home() {
                     </div>
                   </div>
                 </div>
-              </CarouselItem>
-            ))}
+              </CarouselItem>)}
           </CarouselContent>
           <CarouselPrevious className="left-4" />
           <CarouselNext className="right-4" />
@@ -127,15 +102,10 @@ export function Home() {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <Link key={category.name} to="/products" className="group">
+          {categories.map(category => <Link key={category.name} to="/products" className="group">
               <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                 <div className="relative">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={category.image} alt={category.name} className="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                     <h3 className="text-lg font-semibold mb-1">{category.name}</h3>
@@ -143,8 +113,7 @@ export function Home() {
                   </div>
                 </div>
               </Card>
-            </Link>
-          ))}
+            </Link>)}
         </div>
       </section>
 
@@ -187,14 +156,12 @@ export function Home() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {topRatedProducts.map((product) => (
-            <div key={product.id} className="relative">
+          {topRatedProducts.map(product => <div key={product.id} className="relative">
               <Badge className="absolute top-2 left-2 z-10 bg-yellow-500 text-white">
                 ⭐ Top Rated
               </Badge>
               <ProductCard product={product} />
-            </div>
-          ))}
+            </div>)}
         </div>
       </section>
 
@@ -211,14 +178,12 @@ export function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mostPurchasedProducts.map((product) => (
-              <div key={product.id} className="relative">
+            {mostPurchasedProducts.map(product => <div key={product.id} className="relative">
                 <Badge className="absolute top-2 left-2 z-10 bg-green-600 text-white">
                   🔥 Bestseller
                 </Badge>
                 <ProductCard product={product} />
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -235,14 +200,12 @@ export function Home() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newArrivals.map((product) => (
-            <div key={product.id} className="relative">
+          {newArrivals.map(product => <div key={product.id} className="relative">
               <Badge className="absolute top-2 left-2 z-10 bg-purple-600 text-white">
                 ✨ New
               </Badge>
               <ProductCard product={product} />
-            </div>
-          ))}
+            </div>)}
         </div>
       </section>
 
@@ -255,9 +218,7 @@ export function Home() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {featuredProducts.map(product => <ProductCard key={product.id} product={product} />)}
         </div>
         <div className="text-center">
           <Link to="/products">
@@ -278,11 +239,7 @@ export function Home() {
               Subscribe to our newsletter and be the first to know about new products, sales, and exclusive offers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ecommerce-500 focus:border-transparent"
-              />
+              <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ecommerce-500 focus:border-transparent" />
               <Button className="bg-ecommerce-600 hover:bg-ecommerce-700">
                 Subscribe
               </Button>
@@ -290,6 +247,5 @@ export function Home() {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 }
