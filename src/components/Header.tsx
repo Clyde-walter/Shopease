@@ -25,9 +25,8 @@ export function Header() {
       <header className="bg-white shadow-lg sticky top-0 z-40 border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Mobile Menu + Logo */}
-            <div className="flex items-center space-x-4">
-              <MobileNav />
+            {/* Logo - Always on the left */}
+            <div className="flex items-center">
               <Link to="/" className="text-2xl font-bold text-ecommerce-600 hover:text-ecommerce-700 transition-colors">
                 ShopEase
               </Link>
@@ -77,7 +76,7 @@ export function Header() {
               </Link>
             </nav>
 
-            {/* Actions */}
+            {/* Actions - Mobile menu included here on the right */}
             <div className="flex items-center space-x-2 md:space-x-4">
               <div className="hidden md:block">
                 <LanguageSelector />
@@ -135,6 +134,9 @@ export function Header() {
                   <User className="w-5 h-5" />
                 </Button>
               </Link>
+
+              {/* Mobile Menu - Now on the right */}
+              <MobileNav />
             </div>
           </div>
 

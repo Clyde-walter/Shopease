@@ -32,7 +32,7 @@ export function AdminCollections() {
     category: '',
     stock: '',
     collectionId: '',
-    images: ['/placeholder.svg']
+    images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
   });
 
   const filteredCollections = collections.filter(collection =>
@@ -62,8 +62,8 @@ export function AdminCollections() {
         return URL.createObjectURL(file);
       });
       
-      const updatedImages = [...productForm.images.filter(img => img !== '/placeholder.svg'), ...newImages].slice(0, 5);
-      setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+      const updatedImages = [...productForm.images.filter(img => !img.includes('unsplash')), ...newImages].slice(0, 5);
+      setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']});
     }
   };
 
@@ -74,7 +74,7 @@ export function AdminCollections() {
 
   const removeProductImage = (index: number) => {
     const updatedImages = productForm.images.filter((_, i) => i !== index);
-    setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+    setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']});
   };
 
   const handleCollectionSubmit = (e: React.FormEvent) => {
@@ -176,7 +176,7 @@ export function AdminCollections() {
       category: '',
       stock: '',
       collectionId: selectedCollection?.id || '',
-      images: ['/placeholder.svg']
+      images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
     });
     setEditingProduct(null);
   };
@@ -589,22 +589,27 @@ export function AdminCollections() {
             <TableBody>
               {filteredCollections.map((collection) => {
                 const collectionProducts = getCollectionProducts(collection.id);
+                const validImages = collection.images.filter(img => img && img !== '/placeholder.svg');
                 return (
                   <TableRow key={collection.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="flex -space-x-2">
-                          {collection.images.slice(0, 3).map((image, idx) => (
+                          {validImages.slice(0, 3).map((image, idx) => (
                             <img
                               key={idx}
                               src={image}
                               alt={collection.name}
                               className="w-10 h-10 object-cover rounded border-2 border-white"
+                              onError={(e) => {
+                                console.log('Collection image failed to load:', image);
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop';
+                              }}
                             />
                           ))}
-                          {collection.images.length > 3 && (
+                          {validImages.length > 3 && (
                             <div className="w-10 h-10 bg-gray-200 rounded border-2 border-white flex items-center justify-center text-xs">
-                              +{collection.images.length - 3}
+                              +{validImages.length - 3}
                             </div>
                           )}
                         </div>
@@ -645,7 +650,7 @@ export function AdminCollections() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeleteCollection(collection.id)}
-                          className="text-red-500 hover:text-red-700"
+                          className="text-red-5 hover:text-red-700"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

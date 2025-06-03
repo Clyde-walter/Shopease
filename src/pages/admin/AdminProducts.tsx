@@ -24,7 +24,7 @@ export function AdminProducts() {
     description: '',
     category: '',
     stock: '',
-    images: ['/placeholder.svg']
+    images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
   });
 
   const filteredProducts = products.filter(product => {
@@ -46,14 +46,14 @@ export function AdminProducts() {
         return URL.createObjectURL(file);
       });
       
-      const updatedImages = [...productForm.images.filter(img => img !== '/placeholder.svg'), ...newImages].slice(0, 5);
-      setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+      const updatedImages = [...productForm.images.filter(img => !img.includes('unsplash') && img !== 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop'), ...newImages].slice(0, 5);
+      setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']});
     }
   };
 
   const removeImage = (index: number) => {
     const updatedImages = productForm.images.filter((_, i) => i !== index);
-    setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['/placeholder.svg']});
+    setProductForm({...productForm, images: updatedImages.length > 0 ? updatedImages : ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']});
   };
 
   const handleProductSubmit = (e: React.FormEvent) => {
@@ -100,7 +100,7 @@ export function AdminProducts() {
       description: '',
       category: '',
       stock: '',
-      images: ['/placeholder.svg']
+      images: ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop']
     });
     setEditingProduct(null);
   };
@@ -157,6 +157,7 @@ export function AdminProducts() {
             <SelectItem value="Accessories">Accessories</SelectItem>
             <SelectItem value="Home">Home</SelectItem>
             <SelectItem value="Fitness">Fitness</SelectItem>
+            <SelectItem value="Jewelry">Jewelry</SelectItem>
           </SelectContent>
         </Select>
         <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
@@ -214,6 +215,7 @@ export function AdminProducts() {
                     <SelectItem value="Accessories">Accessories</SelectItem>
                     <SelectItem value="Home">Home</SelectItem>
                     <SelectItem value="Fitness">Fitness</SelectItem>
+                    <SelectItem value="Jewelry">Jewelry</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -245,6 +247,10 @@ export function AdminProducts() {
                           src={image}
                           alt={`Product ${index + 1}`}
                           className="w-full h-20 object-cover rounded border"
+                          onError={(e) => {
+                            console.log('Image failed to load:', image);
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop';
+                          }}
                         />
                         {productForm.images.length > 1 && (
                           <button
@@ -301,22 +307,27 @@ export function AdminProducts() {
               {filteredProducts.map((product) => {
                 const stockStatus = getStockStatus(product.stock);
                 const productImages = product.images || [product.image];
+                const validImages = productImages.filter(img => img && img !== '/placeholder.svg');
                 return (
                   <TableRow key={product.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div className="flex -space-x-2">
-                          {productImages.slice(0, 3).map((image, idx) => (
+                          {validImages.slice(0, 3).map((image, idx) => (
                             <img
                               key={idx}
                               src={image}
                               alt={product.name}
                               className="w-8 h-8 object-cover rounded-full border-2 border-white"
+                              onError={(e) => {
+                                console.log('Table image failed to load:', image);
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop';
+                              }}
                             />
                           ))}
-                          {productImages.length > 3 && (
+                          {validImages.length > 3 && (
                             <div className="w-8 h-8 bg-gray-200 rounded-full border-2 border-white flex items-center justify-center text-xs">
-                              +{productImages.length - 3}
+                              +{validImages.length - 3}
                             </div>
                           )}
                         </div>
