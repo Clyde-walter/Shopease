@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Heart, Package } from 'lucide-react';
 import { useStore } from '@/contexts/StoreContext';
+import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 export function Collections() {
   const navigate = useNavigate();
@@ -74,11 +75,12 @@ export function Collections() {
           {collections.map((collection) => (
             <Card key={collection.id} className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border-0 shadow-lg">
               <div className="relative overflow-hidden">
-                <img
-                  src={collection.images[0] || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&h=400&fit=crop'}
-                  alt={collection.name}
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
-                />
+                <div className="h-64">
+                  <ProductImageCarousel 
+                    images={collection.images || ['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&h=400&fit=crop']}
+                    productName={collection.name}
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <Button
                   variant="ghost"

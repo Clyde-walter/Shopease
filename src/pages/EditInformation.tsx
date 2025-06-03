@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-import { User, Mail, Phone, Calendar, Save } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Save, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
+import { toast } from '@/hooks/use-toast';
 
 export function EditInformation() {
   const [formData, setFormData] = useState({
@@ -18,14 +19,33 @@ export function EditInformation() {
     smsNotifications: false,
     emailNotifications: true
   });
+  const [profileImage, setProfileImage] = useState('/placeholder.svg');
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfileImage(e.target?.result as string);
+        toast({
+          title: "Profile photo updated!",
+          description: "Your profile photo has been changed successfully.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = () => {
     console.log('Saving user information:', formData);
-    // In a real app, this would make an API call
+    toast({
+      title: "Changes saved!",
+      description: "Your information has been updated successfully.",
+    });
   };
 
   return (
@@ -41,13 +61,27 @@ export function EditInformation() {
             </CardHeader>
             <CardContent className="flex items-center space-x-4">
               <Avatar className="w-20 h-20">
-                <AvatarImage src="/placeholder.svg" />
-                <AvatarFallback className="text-xl">JD</AvatarFallback>
+                <AvatarImage src={profileImage} />
+                <AvatarFallback className="text-xl">
+                  {formData.firstName[0]}{formData.lastName[0]}
+                </AvatarFallback>
               </Avatar>
               <div>
-                <Button variant="outline" className="mb-2">
-                  Change Photo
-                </Button>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="profile-image-upload"
+                />
+                <label htmlFor="profile-image-upload">
+                  <Button variant="outline" className="mb-2 cursor-pointer" asChild>
+                    <span>
+                      <Camera className="w-4 h-4 mr-2" />
+                      Change Photo
+                    </span>
+                  </Button>
+                </label>
                 <p className="text-sm text-gray-600">
                   JPG, PNG or GIF. Max size 2MB.
                 </p>
@@ -119,7 +153,6 @@ export function EditInformation() {
             </CardContent>
           </Card>
 
-          {/* Notification Preferences */}
           <Card>
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>

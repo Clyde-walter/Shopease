@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, ShoppingCart, Heart, Star, Truck, Shield, RotateCcw } from 'lucide-react';
 import { useStore } from '@/contexts/StoreContext';
 import { toast } from '@/hooks/use-toast';
+import { ProductImageCarousel } from '@/components/ProductImageCarousel';
 
 // Collection products data structure
 const collectionProductsData = {
@@ -68,7 +69,6 @@ const collectionProductsData = {
 export function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const { products, addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
 
@@ -94,7 +94,7 @@ export function ProductDetail() {
     price: regularProduct?.price || 0,
     originalPrice: undefined,
     description: regularProduct?.description || '',
-    images: [regularProduct?.image || '/placeholder.svg'],
+    images: regularProduct?.images || [regularProduct?.image || '/placeholder.svg'],
     inStock: (regularProduct?.stock || 0) > 0,
     stock: regularProduct?.stock || 0,
     rating: 4.5,
@@ -174,30 +174,12 @@ export function ProductDetail() {
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Images */}
+        {/* Product Images with Carousel */}
         <div className="space-y-4">
-          <div className="aspect-square overflow-hidden rounded-lg">
-            <img
-              src={productDetail.images[selectedImage]}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {productDetail.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-2">
-              {productDetail.images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`aspect-square overflow-hidden rounded-md border-2 ${
-                    selectedImage === index ? 'border-ecommerce-600' : 'border-gray-200'
-                  }`}
-                >
-                  <img src={image} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
+          <ProductImageCarousel 
+            images={productDetail.images} 
+            productName={product.name} 
+          />
         </div>
 
         {/* Product Info */}

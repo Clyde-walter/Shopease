@@ -7,6 +7,7 @@ import { useStore } from '@/contexts/StoreContext';
 import { useNotifications } from '@/contexts/NotificationsContext';
 import { CartSidebar } from './CartSidebar';
 import { LanguageSelector } from './LanguageSelector';
+import { MobileNav } from './MobileNav';
 
 export function Header() {
   const location = useLocation();
@@ -24,12 +25,15 @@ export function Header() {
       <header className="bg-white shadow-lg sticky top-0 z-40 border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="text-2xl font-bold text-ecommerce-600 hover:text-ecommerce-700 transition-colors">
-              ShopEase
-            </Link>
+            {/* Mobile Menu + Logo */}
+            <div className="flex items-center space-x-4">
+              <MobileNav />
+              <Link to="/" className="text-2xl font-bold text-ecommerce-600 hover:text-ecommerce-700 transition-colors">
+                ShopEase
+              </Link>
+            </div>
 
-            {/* Navigation */}
+            {/* Navigation - Hidden on mobile */}
             <nav className="hidden md:flex items-center space-x-8">
               <Link
                 to="/"
@@ -74,8 +78,10 @@ export function Header() {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center space-x-4">
-              <LanguageSelector />
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <div className="hidden md:block">
+                <LanguageSelector />
+              </div>
               
               <Button
                 variant="ghost"
@@ -101,11 +107,13 @@ export function Header() {
                 </Button>
               </Link>
 
-              <Link to="/chat">
-                <Button variant="ghost" size="icon" className="hover:bg-ecommerce-50">
-                  <MessageCircle className="w-5 h-5" />
-                </Button>
-              </Link>
+              <div className="hidden md:block">
+                <Link to="/chat">
+                  <Button variant="ghost" size="icon" className="hover:bg-ecommerce-50">
+                    <MessageCircle className="w-5 h-5" />
+                  </Button>
+                </Link>
+              </div>
 
               <Link to="/cart">
                 <Button
